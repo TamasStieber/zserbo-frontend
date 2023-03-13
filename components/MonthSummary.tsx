@@ -12,6 +12,7 @@ import { Doughnut } from 'react-chartjs-2';
 import { categories } from './Categories';
 import { addThousandSeparators } from '@/utils/utils';
 import SentimentDissatisfiedIcon from '@mui/icons-material/SentimentDissatisfied';
+import Image from 'next/image';
 
 ChartJS.register(ArcElement, Tooltip, Legend);
 
@@ -59,8 +60,7 @@ const MonthSummary = ({
   sumPlannedExpenses += currentMonthPlannedSavings;
   sumActualExpenses += currentMonthActualSavings;
   actualRemaining = balance - sumAllSavings;
-  plannedRemaining =
-    sumPlannedIncome + opening - sumPlannedExpenses - sumAllSavings;
+  plannedRemaining = sumPlannedIncome + opening - sumPlannedExpenses;
 
   const sumExpensesByCategory: {
     name: string;
@@ -201,7 +201,12 @@ const MonthSummary = ({
             <Doughnut data={data} options={options} />
           ) : (
             <div className={styles.month_summary_not_found}>
-              <SentimentDissatisfiedIcon />
+              <Image
+                src={'/img/not_found.png'}
+                alt={'Not found'}
+                width='250'
+                height='250'
+              />
               <h3>No expenses to show</h3>
             </div>
           )}

@@ -512,13 +512,6 @@
   color: rgba(0, 0, 0, 0.5);
 }
 
-.month_summary_not_found svg {
-  font-size: 10rem;
-  background-color: var(--purple-0);
-  padding: 20px;
-  border-radius: 50%;
-}
-
 .icon_container,
 .icon_container_small {
   display: flex;
@@ -589,7 +582,6 @@
 .average {
   display: inline-flex;
   align-items: center;
-  background-color: var(--gray-4);
   border-radius: 50px;
   padding: 0 20px 0 10px;
   /* margin: 0 10px 10px 0; */
