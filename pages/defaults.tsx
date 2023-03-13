@@ -41,13 +41,13 @@ const Defaults: NextPage = () => {
             subject: found.name,
             fetchMethod: FetchMethods.delete,
           });
+          setDefaultsListUpdated(!defaultsListUpdated);
       } catch (error) {
         console.error(error);
       }
     };
 
     if (jwtToken) fetchDelete(jwtToken);
-    setDefaultsListUpdated(!defaultsListUpdated);
   };
 
   const fetchDefaults = async (token: string): Promise<void> => {
@@ -94,6 +94,7 @@ const Defaults: NextPage = () => {
             subject: result.default.name,
             fetchMethod: fetchMethod,
           });
+          setDefaultsListUpdated(!defaultsListUpdated);
         }
       } catch (error) {
         console.error(error);
@@ -101,7 +102,6 @@ const Defaults: NextPage = () => {
     };
 
     if (jwtToken) insertDefault(jwtToken);
-    setDefaultsListUpdated(!defaultsListUpdated);
   };
 
   useEffect(() => {

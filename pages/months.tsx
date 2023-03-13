@@ -103,13 +103,13 @@ const Months: NextPage = () => {
             subject: found.name,
             customMessage: 'has been set to default',
           });
+          setMonthListUpdated(!monthListUpdated);
       } catch (error) {
         console.error(error);
       }
     };
 
     if (jwtToken) fetchUpdate(jwtToken);
-    setMonthListUpdated(!monthListUpdated);
   };
 
   const handleDelete = async (id: string): Promise<void> => {
@@ -129,13 +129,13 @@ const Months: NextPage = () => {
             subject: found.name,
             fetchMethod: FetchMethods.delete,
           });
+          setMonthListUpdated(!monthListUpdated);
       } catch (error) {
         console.error(error);
       }
     };
 
     if (jwtToken) fetchDelete(jwtToken);
-    setMonthListUpdated(!monthListUpdated);
   };
 
   const handleSubmit = async (
@@ -167,6 +167,7 @@ const Months: NextPage = () => {
             subject: data.month.name,
             fetchMethod: fetchMethod,
           });
+          setMonthListUpdated(!monthListUpdated);
         }
       } catch (error) {
         console.error(error);
@@ -174,7 +175,6 @@ const Months: NextPage = () => {
     };
 
     if (jwtToken) insertMonth(jwtToken);
-    setMonthListUpdated(!monthListUpdated);
   };
 
   const fetchMonths = async (token: string): Promise<void> => {
