@@ -85,13 +85,13 @@ const Savings: NextPage = () => {
             subject: found.name,
             fetchMethod: FetchMethods.delete,
           });
+          setSavingsListUpdated(!savingsListUpdated);
       } catch (error) {
         console.error(error);
       }
     };
 
     if (jwtToken) fetchDelete(jwtToken);
-    setSavingsListUpdated(!savingsListUpdated);
   };
 
   const handleSubmit = async (
@@ -124,6 +124,7 @@ const Savings: NextPage = () => {
             subject: data.saving.name,
             fetchMethod: fetchMethod,
           });
+          setSavingsListUpdated(!savingsListUpdated);
         }
       } catch (error) {
         console.error(error);
@@ -131,7 +132,6 @@ const Savings: NextPage = () => {
     };
 
     if (jwtToken) insertSaving(jwtToken);
-    setSavingsListUpdated(!savingsListUpdated);
   };
 
   const fetchSavings = async (token: string): Promise<void> => {

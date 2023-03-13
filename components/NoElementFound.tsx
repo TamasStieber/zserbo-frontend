@@ -22,7 +22,7 @@ export function NoSavingsFound() {
   return (
     <div className={styles.month_summary_not_found}>
       <SentimentDissatisfiedIcon />
-      <h3>No months found</h3>
+      <h3>No savings found</h3>
       <p>Get started by creating a new saving</p>
     </div>
   );

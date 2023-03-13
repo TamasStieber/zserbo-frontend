@@ -142,6 +142,7 @@ const MonthDetails = ({ url }: MonthDetailsProps) => {
               subject: currentMonth?.name,
               fetchMethod: FetchMethods.put,
             });
+            setMonthDetailsUpdated(!monthDetailsUpdated);
           }
         }
       } catch (error) {
@@ -150,7 +151,6 @@ const MonthDetails = ({ url }: MonthDetailsProps) => {
     };
 
     if (jwtToken) updateMonth(jwtToken);
-    setMonthDetailsUpdated(!monthDetailsUpdated);
   };
 
   const handleBudgetSubmit = async (
@@ -182,6 +182,7 @@ const MonthDetails = ({ url }: MonthDetailsProps) => {
             subject: result.newBudgetElement.name,
             fetchMethod: fetchMethod,
           });
+          setMonthDetailsUpdated(!monthDetailsUpdated);
         }
       } catch (error) {
         console.error(error);
@@ -189,7 +190,6 @@ const MonthDetails = ({ url }: MonthDetailsProps) => {
     };
 
     if (jwtToken) insertBudget(jwtToken);
-    setMonthDetailsUpdated(!monthDetailsUpdated);
   };
 
   const handleBudgetDelete = async (
@@ -218,13 +218,13 @@ const MonthDetails = ({ url }: MonthDetailsProps) => {
             subject: found.name,
             fetchMethod: FetchMethods.delete,
           });
+          setMonthDetailsUpdated(!monthDetailsUpdated);
       } catch (error) {
         console.error(error);
       }
     };
 
     if (jwtToken) fetchDelete(jwtToken);
-    setMonthDetailsUpdated(!monthDetailsUpdated);
   };
 
   const handleContributionSubmit = async (
@@ -257,6 +257,7 @@ const MonthDetails = ({ url }: MonthDetailsProps) => {
             subject: `Contribution to ${result.contributor.name}`,
             fetchMethod: fetchMethod,
           });
+          setMonthDetailsUpdated(!monthDetailsUpdated);
         }
       } catch (error) {
         console.error(error);
@@ -264,7 +265,6 @@ const MonthDetails = ({ url }: MonthDetailsProps) => {
     };
 
     if (jwtToken) insertSaving(jwtToken);
-    setMonthDetailsUpdated(!monthDetailsUpdated);
   };
 
   const handleContributionDelete = async (
@@ -293,6 +293,7 @@ const MonthDetails = ({ url }: MonthDetailsProps) => {
             subject: `Contribution to ${result.contributorToDelete.name}`,
             fetchMethod: FetchMethods.delete,
           });
+          setMonthDetailsUpdated(!monthDetailsUpdated);
         }
       } catch (error) {
         console.error(error);
@@ -300,7 +301,6 @@ const MonthDetails = ({ url }: MonthDetailsProps) => {
     };
 
     if (jwtToken) fetchDelete(jwtToken);
-    setMonthDetailsUpdated(!monthDetailsUpdated);
   };
 
   const handleSpendingSubmit = async (
@@ -333,6 +333,7 @@ const MonthDetails = ({ url }: MonthDetailsProps) => {
             subject: `Spending from ${result.spending.name}`,
             fetchMethod: fetchMethod,
           });
+          setMonthDetailsUpdated(!monthDetailsUpdated);
         }
       } catch (error) {
         console.error(error);
@@ -340,7 +341,6 @@ const MonthDetails = ({ url }: MonthDetailsProps) => {
     };
 
     if (jwtToken) insertSpending(jwtToken);
-    setMonthDetailsUpdated(!monthDetailsUpdated);
   };
 
   const handleSpendingDelete = async (
@@ -369,6 +369,7 @@ const MonthDetails = ({ url }: MonthDetailsProps) => {
             subject: `Spending from ${result.spendingToDelete.name}`,
             fetchMethod: FetchMethods.delete,
           });
+          setMonthDetailsUpdated(!monthDetailsUpdated);
         }
       } catch (error) {
         console.error(error);
@@ -376,7 +377,6 @@ const MonthDetails = ({ url }: MonthDetailsProps) => {
     };
 
     if (jwtToken) fetchDelete(jwtToken);
-    setMonthDetailsUpdated(!monthDetailsUpdated);
   };
 
   const toggleMonthClose = () => {
@@ -421,6 +421,7 @@ const MonthDetails = ({ url }: MonthDetailsProps) => {
                 ? 'has been opened'
                 : 'has been closed',
             });
+            setMonthDetailsUpdated(!monthDetailsUpdated);
           }
         }
       } catch (error) {
@@ -429,7 +430,6 @@ const MonthDetails = ({ url }: MonthDetailsProps) => {
     };
 
     if (jwtToken) updateMonthClose(jwtToken);
-    setMonthDetailsUpdated(!monthDetailsUpdated);
   };
 
   useEffect(() => {
