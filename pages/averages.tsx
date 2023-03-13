@@ -161,7 +161,15 @@ const Averages: NextPage = () => {
                 {filteredAverages.map((average) => {
                   const Icon = categories[average.categoryId].icon;
                   return (
-                    <div key={average.name} className={styles.average}>
+                    <div
+                      key={average.name}
+                      className={styles.average}
+                      style={{
+                        backgroundColor: `rgba(${
+                          categories[average.categoryId].chartColor
+                        }, 0.1)`,
+                      }}
+                    >
                       <div
                         className={styles.average_icon}
                         style={{
