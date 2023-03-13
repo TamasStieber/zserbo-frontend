@@ -13,6 +13,7 @@ import MoreHorizOutlinedIcon from '@mui/icons-material/MoreHorizOutlined';
 import DoNotDisturbAltOutlinedIcon from '@mui/icons-material/DoNotDisturbAltOutlined';
 import BuildOutlinedIcon from '@mui/icons-material/BuildOutlined';
 import LocalFloristOutlinedIcon from '@mui/icons-material/LocalFloristOutlined';
+import CreditCardIcon from '@mui/icons-material/CreditCard';
 
 export const categories = [
     {
@@ -115,6 +116,13 @@ export const categories = [
     },
     {
         id: 14,
+        name: 'Loans',
+        color: '#00CFCB',
+        chartColor: '0, 207, 203',
+        icon: CreditCardIcon,
+    },
+    {
+        id: 15,
         name: 'Others',
         color: '#BE92DA',
         chartColor: '190, 146, 218',
