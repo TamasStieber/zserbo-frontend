@@ -6,8 +6,31 @@ export const addThousandSeparators = (number: Number | undefined, currency = '')
         const suffix = currency ? ` ${currency}` : ''
         return number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ' ') + suffix;
     }
-    return number
+    return ''
   };
+
+export const formatInput = (target: EventTarget) => {
+    const input = target as HTMLInputElement;
+    const individualValues = input.value.split('+')
+    const parsedIndividualValues = individualValues.map((individualValue) => individualValue.split(' ').join(''))
+    let returnValue = '';
+    parsedIndividualValues.forEach((value, id, array) => {
+        if (!isNaN(parseInt(value))) returnValue += addThousandSeparators(parseInt(value));
+        if (id !== array.length - 1) returnValue += '+';
+    })
+    if (!isNaN(parseInt(returnValue))) input.value = returnValue
+}
+
+export const replaceEmptyValue = (target: EventTarget, replaceWith = 0) => {
+    const input = target as HTMLInputElement;
+    if (input.value === '' || input.value === null || input.value === undefined) {
+        input.focus();
+        document.execCommand('insertText', false, '0');
+        input.blur();
+    } else {
+        return
+    }
+}
 
 export const parseFinancialInput = (input: string | number | undefined) => {
     if(input) {

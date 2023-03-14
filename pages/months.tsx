@@ -1,42 +1,44 @@
-import { NextPage } from 'next';
-import { useEffect, useState } from 'react';
-import { useRouter } from 'next/router';
+import { NextPage } from "next";
+import { useEffect, useState } from "react";
+import { useRouter } from "next/router";
 import {
   Month,
   Months,
   MonthValues,
   MonthToDelete,
   FetchMethods,
-} from '../types/types';
-import PageContainer from '../components/layout/PageContainer';
-import Radio from '@mui/material/Radio';
-import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
-import styles from '../styles/Home.module.css';
-import { Button } from '@mui/material';
-import Dialog from '@mui/material/Dialog';
-import DialogActions from '@mui/material/DialogActions';
-import DialogContent from '@mui/material/DialogContent';
-import DialogContentText from '@mui/material/DialogContentText';
-import DialogTitle from '@mui/material/DialogTitle';
-import NewMonthForm from '../components/NewMonthForm';
-import WarningOutlinedIcon from '@mui/icons-material/WarningOutlined';
-import { addThousandSeparators, showSuccessToast } from '../utils/utils';
-import { ToastContainer } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
-import { NoMonthsFound } from '@/components/NoElementFound';
+} from "../types/types";
+import PageContainer from "../components/layout/PageContainer";
+import Radio from "@mui/material/Radio";
+import DeleteForeverIcon from "@mui/icons-material/DeleteForever";
+import styles from "../styles/Home.module.css";
+import { Backdrop, Button, CircularProgress, Skeleton } from "@mui/material";
+import Dialog from "@mui/material/Dialog";
+import DialogActions from "@mui/material/DialogActions";
+import DialogContent from "@mui/material/DialogContent";
+import DialogContentText from "@mui/material/DialogContentText";
+import DialogTitle from "@mui/material/DialogTitle";
+import NewMonthForm from "../components/NewMonthForm";
+import WarningOutlinedIcon from "@mui/icons-material/WarningOutlined";
+import { addThousandSeparators, showSuccessToast } from "../utils/utils";
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import { NoMonthsFound } from "@/components/NoElementFound";
 
 const Months: NextPage = () => {
   const router = useRouter();
 
   const initialValuesForEmptyModal: MonthValues = {
-    predecessor: '',
-    year: '',
-    month: '',
-    comment: '',
+    predecessor: "",
+    year: "",
+    month: "",
+    comment: "",
     default: true,
   };
 
   const [jwtToken, setJwtToken] = useState<string | null>(null);
+  const [ready, setReady] = useState<boolean>(false);
+  const [loading, setLoading] = useState<boolean>(false);
   const [months, setMonths] = useState<Months>([]);
   const [monthListUpdated, setMonthListUpdated] = useState<boolean>(false);
   const [open, setOpen] = useState(false);
@@ -65,18 +67,18 @@ const Months: NextPage = () => {
     const { nodeName } = event.target as HTMLTableCellElement;
 
     if (
-      nodeName !== 'svg' &&
-      nodeName !== 'path' &&
-      nodeName !== 'A' &&
-      nodeName !== 'INPUT'
+      nodeName !== "svg" &&
+      nodeName !== "path" &&
+      nodeName !== "A" &&
+      nodeName !== "INPUT"
     ) {
       setFetchMethod(FetchMethods.put);
       const initialValuesPrep = {
         _id: element._id,
         predecessor:
-          element.predecessor.length > 0 ? element.predecessor[0].monthId : '',
-        year: element.name.split(' ')[0],
-        month: element.name.split(' ')[1],
+          element.predecessor.length > 0 ? element.predecessor[0].monthId : "",
+        year: element.name.split(" ")[0],
+        month: element.name.split(" ")[1],
         comment: element.comment,
         default: element.default,
       };
@@ -88,24 +90,28 @@ const Months: NextPage = () => {
 
   const updateDefault = async (id: string): Promise<void> => {
     const fetchUpdate = async (token: string): Promise<void> => {
+      setLoading(true);
       try {
         await fetch(`${process.env.BACKEND_URL}/months/update-default/${id}`, {
-          method: 'post',
+          method: "post",
           headers: {
             Authorization: `Bearer ${token}`,
-            'Content-Type': 'application/json',
+            "Content-Type": "application/json",
           },
         });
 
         const found = months.find((month) => month._id === id);
-        if (found)
+        if (found) {
           showSuccessToast({
             subject: found.name,
-            customMessage: 'has been set to default',
+            customMessage: "has been set to default",
           });
-          setMonthListUpdated(!monthListUpdated);
+          setLoading(false);
+        }
+        setMonthListUpdated(!monthListUpdated);
       } catch (error) {
         console.error(error);
+        setLoading(false);
       }
     };
 
@@ -114,24 +120,28 @@ const Months: NextPage = () => {
 
   const handleDelete = async (id: string): Promise<void> => {
     const fetchDelete = async (token: string): Promise<void> => {
+      setLoading(true);
       try {
         await fetch(`${process.env.BACKEND_URL}/months/${id}`, {
-          method: 'delete',
+          method: "delete",
           headers: {
             Authorization: `Bearer ${token}`,
-            'Content-Type': 'application/json',
+            "Content-Type": "application/json",
           },
         });
 
         const found = months.find((month) => month._id === id);
-        if (found)
+        if (found) {
           showSuccessToast({
             subject: found.name,
             fetchMethod: FetchMethods.delete,
           });
           setMonthListUpdated(!monthListUpdated);
+          setLoading(false);
+        }
       } catch (error) {
         console.error(error);
+        setLoading(false);
       }
     };
 
@@ -144,7 +154,8 @@ const Months: NextPage = () => {
     id?: string
   ): Promise<void> => {
     const insertMonth = async (token: string): Promise<void> => {
-      id = id ? id : '';
+      id = id ? id : "";
+      setLoading(true);
       try {
         const fetchResult = await fetch(
           `${process.env.BACKEND_URL}/months/${id}`,
@@ -153,7 +164,7 @@ const Months: NextPage = () => {
             body: submitBody,
             headers: {
               Authorization: `Bearer ${token}`,
-              'Content-Type': 'application/json',
+              "Content-Type": "application/json",
             },
           }
         );
@@ -162,15 +173,18 @@ const Months: NextPage = () => {
 
         if (data.error) {
           console.error(data.error);
+          setLoading(false);
         } else {
           showSuccessToast({
             subject: data.month.name,
             fetchMethod: fetchMethod,
           });
           setMonthListUpdated(!monthListUpdated);
+          setLoading(false);
         }
       } catch (error) {
         console.error(error);
+        setLoading(false);
       }
     };
 
@@ -180,12 +194,17 @@ const Months: NextPage = () => {
   const fetchMonths = async (token: string): Promise<void> => {
     try {
       const fetchResult = await fetch(`${process.env.BACKEND_URL}/months`, {
-        method: 'GET',
+        method: "GET",
         headers: { Authorization: `Bearer ${token}` },
       });
       const data = await fetchResult.json();
 
-      setMonths(data.allMonths);
+      if (data.error) {
+        console.error(data.error);
+      } else {
+        setMonths(data.allMonths);
+        setReady(true);
+      }
     } catch (error) {
       console.error(error);
     }
@@ -198,7 +217,7 @@ const Months: NextPage = () => {
   };
 
   useEffect(() => {
-    const storedJwtToken = localStorage.getItem('jwtToken');
+    const storedJwtToken = localStorage.getItem("jwtToken");
     if (storedJwtToken !== null) setJwtToken(storedJwtToken);
   }, []);
 
@@ -210,78 +229,106 @@ const Months: NextPage = () => {
   }, [jwtToken, monthListUpdated]);
 
   return (
-    <PageContainer title='Manage Months'>
-      {months.length > 0 ? (
+    <PageContainer title="Manage Months">
+      {ready ? (
         <>
-          {months.map((month: Month) => {
-            let sumIncome = 0;
-            let sumExpenses = 0;
+          {months.length > 0 ? (
+            <>
+              {months.map((month: Month) => {
+                let sumIncome = 0;
+                let sumExpenses = 0;
 
-            month.income.forEach((income) => {
-              sumIncome += income.value;
-            });
-            month.budget.forEach((expense) => {
-              sumExpenses += expense.actual;
-            });
-            return (
-              <div
-                key={month._id}
-                className={styles.row}
-                onClick={(event) => updateElement(month, event)}
-              >
-                <Radio
-                  checked={month.default}
-                  onClick={() => updateDefault(month._id)}
-                />
-                <div style={{ width: '5%', textAlign: 'center' }}>
-                  {month.closed ? 'Closed' : 'Open'}
-                </div>
-                <div style={{ width: '22%', textAlign: 'center' }}>
-                  <a href={`monthly-budget/${month.url}`}>{month.name}</a>
-                </div>
-                <div style={{ width: '22%' }}>
-                  Sum income: {addThousandSeparators(sumIncome, 'Ft')}
-                </div>
-                <div style={{ width: '22%' }}>
-                  Sum Expenses: {addThousandSeparators(sumExpenses, 'Ft')}
-                </div>
-                <span className={styles.delete_button}>
-                  <DeleteForeverIcon
-                    onClick={() => handleDeleteClick(month._id, month.name)}
-                  />
-                </span>
-              </div>
-            );
-          })}{' '}
+                month.income.forEach((income) => {
+                  sumIncome += income.value;
+                });
+                month.budget.forEach((expense) => {
+                  sumExpenses += expense.actual;
+                });
+                return (
+                  <div
+                    key={month._id}
+                    className={styles.row}
+                    onClick={(event) => updateElement(month, event)}
+                  >
+                    <Radio
+                      checked={month.default}
+                      onClick={() => updateDefault(month._id)}
+                    />
+                    <div style={{ width: "5%", textAlign: "center" }}>
+                      {month.closed ? "Closed" : "Open"}
+                    </div>
+                    <div style={{ width: "22%", textAlign: "center" }}>
+                      <a href={`monthly-budget/${month.url}`}>{month.name}</a>
+                    </div>
+                    <div style={{ width: "22%" }}>
+                      Sum income: {addThousandSeparators(sumIncome, "Ft")}
+                    </div>
+                    <div style={{ width: "22%" }}>
+                      Sum Expenses: {addThousandSeparators(sumExpenses, "Ft")}
+                    </div>
+                    <span className={styles.delete_button}>
+                      <DeleteForeverIcon
+                        onClick={() => handleDeleteClick(month._id, month.name)}
+                      />
+                    </span>
+                  </div>
+                );
+              })}{" "}
+            </>
+          ) : (
+            <NoMonthsFound link={false} />
+          )}
+          <Button variant="contained" onClick={addElement}>
+            Add
+          </Button>
+          <Dialog open={open} onClose={handleClose}>
+            <DialogTitle>Add new month</DialogTitle>
+            <DialogContent dividers>
+              <DialogContentText>
+                Please enter the details of the month.
+              </DialogContentText>
+              <NewMonthForm
+                closeHandler={handleClose}
+                submitHandler={handleSubmit}
+                initialValues={initialValues}
+                months={months}
+                fetchMethod={fetchMethod}
+              />
+            </DialogContent>
+          </Dialog>
+          <ConfirmationDialog
+            open={warningOpen}
+            closeHandler={handleWarningClose}
+            deleteHandler={handleDelete}
+            itemToDelete={itemToDelete}
+          />
+          <ToastContainer />
+          <Backdrop sx={{ color: "#fff", zIndex: 1000 }} open={loading}>
+            <CircularProgress color="success" />
+          </Backdrop>
         </>
       ) : (
-        <NoMonthsFound link={false} />
-      )}
-      <Button variant='contained' onClick={addElement}>
-        Add
-      </Button>
-      <Dialog open={open} onClose={handleClose}>
-        <DialogTitle>Add new month</DialogTitle>
-        <DialogContent dividers>
-          <DialogContentText>
-            Please enter the details of the month.
-          </DialogContentText>
-          <NewMonthForm
-            closeHandler={handleClose}
-            submitHandler={handleSubmit}
-            initialValues={initialValues}
-            months={months}
-            fetchMethod={fetchMethod}
+        <>
+          <Skeleton
+            animation="wave"
+            variant="rounded"
+            height={54}
+            sx={{ marginBottom: "10px", borderRadius: "10px" }}
           />
-        </DialogContent>
-      </Dialog>
-      <ConfirmationDialog
-        open={warningOpen}
-        closeHandler={handleWarningClose}
-        deleteHandler={handleDelete}
-        itemToDelete={itemToDelete}
-      />
-      <ToastContainer />
+          <Skeleton
+            animation="wave"
+            variant="rounded"
+            height={54}
+            sx={{ marginBottom: "10px", borderRadius: "10px" }}
+          />
+          <Skeleton
+            animation="wave"
+            variant="rounded"
+            height={54}
+            sx={{ marginBottom: "10px", borderRadius: "10px" }}
+          />
+        </>
+      )}
     </PageContainer>
   );
 };
@@ -302,16 +349,16 @@ const ConfirmationDialog = ({
   } else {
     return (
       <Dialog open={open} onClose={closeHandler}>
-        <DialogTitle sx={{ color: '#ed6c02', borderTop: '5px solid #ed6c02' }}>
+        <DialogTitle sx={{ color: "#ed6c02", borderTop: "5px solid #ed6c02" }}>
           Warning!
         </DialogTitle>
         <DialogContent>
           <div className={styles.confirmation_dialog}>
             <div
               className={styles.icon_container}
-              style={{ color: '#ed6c02', marginRight: '20px' }}
+              style={{ color: "#ed6c02", marginRight: "20px" }}
             >
-              <WarningOutlinedIcon sx={{ fontSize: '3rem' }} />
+              <WarningOutlinedIcon sx={{ fontSize: "3rem" }} />
             </div>
             Do you really want to delete {itemToDelete.name}?
           </div>
@@ -319,8 +366,8 @@ const ConfirmationDialog = ({
         <DialogActions>
           <Button onClick={closeHandler}>Cancel</Button>
           <Button
-            variant='contained'
-            color='warning'
+            variant="contained"
+            color="warning"
             onClick={() => {
               deleteHandler(itemToDelete.id);
               closeHandler();

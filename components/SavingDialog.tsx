@@ -11,7 +11,7 @@ import {
 import { FetchMethods, SavingDialogProps } from '../types/types';
 import { useFormik } from 'formik';
 import * as yup from 'yup';
-import { addThousandSeparators, parseFinancialInput } from '../utils/utils';
+import { addThousandSeparators, formatInput, parseFinancialInput, replaceEmptyValue } from '../utils/utils';
 
 const SavingDialog = ({
   open,
@@ -132,6 +132,8 @@ const SavingForm = ({
           id='goal'
           name='goal'
           label='Goal'
+          onChangeCapture={(event) => (formatInput(event.target))}
+          onBlur={(event) => replaceEmptyValue(event.target)}
           onFocus={(event) => {
             event.target.select();
           }}
@@ -152,6 +154,8 @@ const SavingForm = ({
           id='initial'
           name='initial'
           label='Initial'
+          onChangeCapture={(event) => (formatInput(event.target))}
+          onBlur={(event) => replaceEmptyValue(event.target)}
           onFocus={(event) => {
             event.target.select();
           }}

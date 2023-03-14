@@ -11,7 +11,7 @@ import {
 import { UpdateDialogProps } from '../types/types';
 import { useFormik } from 'formik';
 import * as yup from 'yup';
-import { addThousandSeparators, parseFinancialInput } from '../utils/utils';
+import { addThousandSeparators, formatInput, parseFinancialInput, replaceEmptyValue } from '../utils/utils';
 
 const UpdateDialog = ({
   open,
@@ -106,6 +106,8 @@ const UpdateForm = ({
           id='balance'
           name='balance'
           label='Balance'
+          onChangeCapture={(event) => (formatInput(event.target))}
+          onBlur={(event) => replaceEmptyValue(event.target)}
           onFocus={(event) => {
             event.target.select();
           }}
@@ -125,6 +127,8 @@ const UpdateForm = ({
           id='opening'
           name='opening'
           label='Opening'
+          onChangeCapture={(event) => (formatInput(event.target))}
+          onBlur={(event) => replaceEmptyValue(event.target)}
           onFocus={(event) => {
             event.target.select();
           }}
