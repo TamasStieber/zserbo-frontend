@@ -33,15 +33,20 @@ const MonthSummary = ({
   let currentMonthPlannedSavings = 0;
   let currentMonthActualSavings = 0;
 
+  savings.forEach((saving) => {
+    saving.contributors.forEach((contributor) => {
+      if (contributor.monthId === currentMonth._id) {
+        currentMonthPlannedSavings += contributor.plan;
+        currentMonthActualSavings += contributor.actual;
+      }
+    });
+  })
+
   if (!currentMonth.closed) {
     savings.forEach((saving) => {
       sumAllSavings += saving.initial;
       saving.contributors.forEach((contributor) => {
         sumAllSavings += contributor.actual;
-        if (contributor.monthId === currentMonth._id) {
-          currentMonthPlannedSavings += contributor.plan;
-          currentMonthActualSavings += contributor.actual;
-        }
       });
       saving.spendings.forEach((spending) => {
         sumAllSavings -= spending.amount;
@@ -197,7 +202,7 @@ const MonthSummary = ({
         </div>
         <div className={styles.month_summary_chart}>
           {/* <h3>Expenses by categories</h3> */}
-          {sumExpensesByCategory.length > 0 ? (
+          {sumActualExpenses > 0 ? (
             <Doughnut data={data} options={options} />
           ) : (
             <div className={styles.month_summary_not_found}>

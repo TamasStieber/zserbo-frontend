@@ -23,7 +23,7 @@ import {
 import { useFormik } from 'formik';
 import * as yup from 'yup';
 import { useState } from 'react';
-import { addThousandSeparators, parseFinancialInput } from '../utils/utils';
+import { addThousandSeparators, formatInput, parseFinancialInput, replaceEmptyValue } from '../utils/utils';
 import { categories } from './Categories';
 import styles from '../styles/Home.module.css';
 
@@ -199,6 +199,8 @@ const BudgetForm = ({
             id='value'
             name='value'
             label='Value'
+            onChangeCapture={(event) => (formatInput(event.target))}
+            onBlur={(event) => replaceEmptyValue(event.target)}
             onFocus={(event) => {
               event.target.select();
             }}
@@ -226,6 +228,8 @@ const BudgetForm = ({
               id='plan'
               name='plan'
               label='Planned'
+              onChangeCapture={(event) => (formatInput(event.target))}
+              onBlur={(event) => replaceEmptyValue(event.target)}
               onFocus={(event) => {
                 event.target.select();
               }}
@@ -248,6 +252,8 @@ const BudgetForm = ({
               id='actual'
               name='actual'
               label='Actual'
+              onChangeCapture={(event) => (formatInput(event.target))}
+              onBlur={(event) => replaceEmptyValue(event.target)}
               onFocus={(event) => {
                 event.target.select();
               }}

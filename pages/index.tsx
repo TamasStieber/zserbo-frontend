@@ -1,6 +1,6 @@
-import { categories } from '@/components/Categories';
-import PageContainer from '@/components/layout/PageContainer';
-import { NextPage } from 'next';
+import { categories } from "@/components/Categories";
+import PageContainer from "@/components/layout/PageContainer";
+import { NextPage } from "next";
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -11,17 +11,18 @@ import {
   Title,
   Tooltip,
   Legend,
-} from 'chart.js';
-import { Line, Bar } from 'react-chartjs-2';
-import { useState, useEffect } from 'react';
-import styles from '../styles/Home.module.css';
-import { addThousandSeparators } from '@/utils/utils';
-import TrendingUpIcon from '@mui/icons-material/TrendingUp';
-import TrendingDownIcon from '@mui/icons-material/TrendingDown';
-import SavingsOutlinedIcon from '@mui/icons-material/SavingsOutlined';
-import { Months, Savings } from '@/types/types';
-import DashboardAverage from '@/components/DashboardAverage';
-import { NoMonthsFound } from '@/components/NoElementFound';
+} from "chart.js";
+import { Line, Bar } from "react-chartjs-2";
+import { useState, useEffect } from "react";
+import styles from "../styles/Home.module.css";
+import { addThousandSeparators } from "@/utils/utils";
+import TrendingUpIcon from "@mui/icons-material/TrendingUp";
+import TrendingDownIcon from "@mui/icons-material/TrendingDown";
+import SavingsOutlinedIcon from "@mui/icons-material/SavingsOutlined";
+import { Months, Savings } from "@/types/types";
+import DashboardAverage from "@/components/DashboardAverage";
+import { NoMonthsFound } from "@/components/NoElementFound";
+import { Skeleton } from "@mui/material";
 
 ChartJS.register(
   CategoryScale,
@@ -36,6 +37,8 @@ ChartJS.register(
 
 const Home: NextPage = () => {
   const [jwtToken, setJwtToken] = useState<string | null>(null);
+  const [monthsReady, setMonthsReady] = useState<boolean>(false);
+  const [savingsReady, setSavingsReady] = useState<boolean>(false);
   const [months, setMonths] = useState<Months | null>(null);
   const [savings, setSavings] = useState<Savings | null>(null);
 
@@ -121,7 +124,7 @@ const Home: NextPage = () => {
       data: number[];
       backgroundColor: string[];
     } = {
-      label: 'Amount',
+      label: "Amount",
       data: [],
       backgroundColor: [],
     };
@@ -160,16 +163,16 @@ const Home: NextPage = () => {
     });
 
     datasets.push({
-      label: 'Actual Expenses',
+      label: "Actual Expenses",
       data: actualData,
-      borderColor: 'rgb(255, 99, 132)',
-      backgroundColor: 'rgba(255, 99, 132, 1)',
+      borderColor: "rgb(255, 99, 132)",
+      backgroundColor: "rgba(255, 99, 132, 1)",
     });
     datasets.push({
-      label: 'Planned Expenses',
+      label: "Planned Expenses",
       data: planData,
-      borderColor: 'rgb(53, 162, 235)',
-      backgroundColor: 'rgba(53, 162, 235, 1)',
+      borderColor: "rgb(53, 162, 235)",
+      backgroundColor: "rgba(53, 162, 235, 1)",
     });
 
     return {
@@ -189,28 +192,28 @@ const Home: NextPage = () => {
     plugins: {
       legend: {
         display: true,
-        position: 'bottom' as const,
+        position: "bottom" as const,
       },
       tooltip: {
         callbacks: {
           label: (context: any) => {
             return `${context.dataset.label}: ${addThousandSeparators(
               context.parsed.y,
-              'Ft'
+              "Ft"
             )}`;
           },
         },
       },
       title: {
         display: false,
-        text: 'Chart.js Line Chart',
+        text: "Chart.js Line Chart",
       },
     },
     scales: {
       y: {
         ticks: {
           callback: (value: any) => {
-            return addThousandSeparators(value, 'Ft');
+            return addThousandSeparators(value, "Ft");
           },
         },
       },
@@ -229,21 +232,21 @@ const Home: NextPage = () => {
           label: (context: any) => {
             return `${context.dataset.label}: ${addThousandSeparators(
               context.parsed.y,
-              'Ft'
+              "Ft"
             )}`;
           },
         },
       },
       title: {
         display: false,
-        text: 'Chart.js Line Chart',
+        text: "Chart.js Line Chart",
       },
     },
     scales: {
       y: {
         ticks: {
           callback: (value: any) => {
-            return addThousandSeparators(value, 'Ft');
+            return addThousandSeparators(value, "Ft");
           },
         },
       },
@@ -252,13 +255,18 @@ const Home: NextPage = () => {
 
   const fetchMonths = async (token: string): Promise<void> => {
     try {
-      const fetchResult = await fetch(process.env.BACKEND_URL + '/months', {
-        method: 'GET',
+      const fetchResult = await fetch(process.env.BACKEND_URL + "/months", {
+        method: "GET",
         headers: { Authorization: `Bearer ${token}` },
       });
       const data = await fetchResult.json();
 
-      setMonths(data.allMonths);
+      if (data.error) {
+        console.error(data.error);
+      } else {
+        setMonths(data.allMonths);
+        setMonthsReady(true);
+      }
     } catch (error) {
       console.error(error);
     }
@@ -266,20 +274,25 @@ const Home: NextPage = () => {
 
   const fetchSavings = async (token: string): Promise<void> => {
     try {
-      const fetchResult = await fetch(process.env.BACKEND_URL + '/savings', {
-        method: 'GET',
+      const fetchResult = await fetch(process.env.BACKEND_URL + "/savings", {
+        method: "GET",
         headers: { Authorization: `Bearer ${token}` },
       });
       const data = await fetchResult.json();
 
-      setSavings(data.allSavings);
+      if (data.error) {
+        console.error(data.error);
+      } else {
+        setSavings(data.allSavings);
+        setSavingsReady(true);
+      }
     } catch (error) {
       console.error(error);
     }
   };
 
   useEffect(() => {
-    const storedJwtToken = localStorage.getItem('jwtToken');
+    const storedJwtToken = localStorage.getItem("jwtToken");
     if (storedJwtToken !== null) setJwtToken(storedJwtToken);
   }, []);
 
@@ -292,49 +305,62 @@ const Home: NextPage = () => {
   }, [jwtToken]);
 
   return (
-    <PageContainer title='Dashboard'>
-      {months && months.length > 0 ? (
+    <PageContainer title="Dashboard">
+      {monthsReady && savingsReady ? (
         <>
-          <div className={styles.dashboard_averages}>
-            <DashboardAverage
-              average={averageIncome.average}
-              primary={'Average Income'}
-              secondary={'Across all months'}
-              icon={<TrendingUpIcon style={{ color: '#398f1f' }} />}
-            />
-            <DashboardAverage
-              average={averageExpenses.average}
-              primary={'Average Expenses'}
-              secondary={'Across all months'}
-              icon={<TrendingDownIcon style={{ color: '#b30000' }} />}
-            />
-            <DashboardAverage
-              average={sumAllSavings}
-              primary={'All Savings'}
-              secondary={'Across all months'}
-              icon={<SavingsOutlinedIcon style={{ color: '#1976d2' }} />}
-            />
-          </div>
-          <div className={styles.dashboard_charts}>
-            <div className={styles.dashboard_chart}>
-              <h3>Planned and actual Expenses</h3>
-              <div className={styles.dashboard_chart_body}>
-                <Line options={expensesChartOptions} data={expensesData} />
-              </div>
-            </div>
-            <div className={styles.dashboard_chart}>
-              <h3>Average actual Expenses by Categories</h3>
-              <div className={styles.dashboard_chart_body}>
-                <Bar
-                  options={averagesByCategoriesChartOptions}
-                  data={averagesByCategoriesData}
+          {months && months.length > 0 ? (
+            <>
+              <div className={styles.dashboard_averages}>
+                <DashboardAverage
+                  average={averageIncome.average}
+                  primary={"Average Income"}
+                  secondary={"Across all months"}
+                  icon={<TrendingUpIcon style={{ color: "#398f1f" }} />}
+                />
+                <DashboardAverage
+                  average={averageExpenses.average}
+                  primary={"Average Expenses"}
+                  secondary={"Across all months"}
+                  icon={<TrendingDownIcon style={{ color: "#b30000" }} />}
+                />
+                <DashboardAverage
+                  average={sumAllSavings}
+                  primary={"All Savings"}
+                  secondary={"Across all months"}
+                  icon={<SavingsOutlinedIcon style={{ color: "#1976d2" }} />}
                 />
               </div>
-            </div>
-          </div>
+              <div className={styles.dashboard_charts}>
+                <div className={styles.dashboard_chart}>
+                  <h3>Planned and actual Expenses</h3>
+                  <div className={styles.dashboard_chart_body}>
+                    <Line options={expensesChartOptions} data={expensesData} />
+                  </div>
+                </div>
+                <div className={styles.dashboard_chart}>
+                  <h3>Average actual Expenses by Categories</h3>
+                  <div className={styles.dashboard_chart_body}>
+                    <Bar
+                      options={averagesByCategoriesChartOptions}
+                      data={averagesByCategoriesData}
+                    />
+                  </div>
+                </div>
+              </div>
+            </>
+          ) : (
+            <NoMonthsFound link={true} />
+          )}
         </>
       ) : (
-        <NoMonthsFound link={true} />
+        <>
+          <Skeleton
+            animation="wave"
+            variant="rounded"
+            height={500}
+            sx={{ marginBottom: "10px", borderRadius: "10px" }}
+          />
+        </>
       )}
     </PageContainer>
   );

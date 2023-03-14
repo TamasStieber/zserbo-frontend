@@ -12,7 +12,7 @@ import {
 import { FetchMethods, SpendingDialogProps } from '../types/types';
 import { useFormik } from 'formik';
 import * as yup from 'yup';
-import { addThousandSeparators, parseFinancialInput } from '../utils/utils';
+import { addThousandSeparators, formatInput, parseFinancialInput, replaceEmptyValue } from '../utils/utils';
 
 const SpendingDialog = ({
   savings,
@@ -123,6 +123,8 @@ const SpendingForm = ({
         id='amount'
         name='amount'
         label='Amount'
+        onChangeCapture={(event) => (formatInput(event.target))}
+        onBlur={(event) => replaceEmptyValue(event.target)}
         onFocus={(event) => {
           event.target.select();
         }}

@@ -117,7 +117,7 @@ export type MonthValues = {
 export type NewMonthValues = MonthValues;
 
 export type PageContainerProps = {
-  title: string;
+  title: string | JSX.Element;
   children?: ReactNode;
 }
 
