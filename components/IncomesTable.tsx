@@ -15,10 +15,11 @@ import {
   DialogActions,
   DialogContent,
   DialogTitle,
+  Tooltip,
 } from '@mui/material';
 import { useState } from 'react';
 import BudgetElementDialog from './BudgetElementDialog';
-import { addThousandSeparators } from '../utils/utils';
+import { addThousandSeparators, formatDate } from '../utils/utils';
 import WarningOutlinedIcon from '@mui/icons-material/WarningOutlined';
 
 const IncomesTable = ({
@@ -92,26 +93,37 @@ const IncomesTable = ({
               </thead>
               <tbody>
                 {incomes.map((income) => (
-                  <tr
+                  <Tooltip
+                    title={
+                      income.date
+                        ? `Last modified: ${formatDate(income.date)}`
+                        : ''
+                    }
+                    arrow
+                    enterDelay={500}
                     key={income.name}
-                    onClick={(event) => updateElement(income, event)}
                   >
-                    <td>{income.name}</td>
-                    <td>{addThousandSeparators(income.value, 'Ft')}</td>
-                    <td>
-                      <span className={styles.delete_button} id={income._id}>
-                        <DeleteForeverIcon
-                          onClick={() =>
-                            handleDeleteClick(
-                              income._id,
-                              income.name,
-                              BudgetElements.income
-                            )
-                          }
-                        />
-                      </span>
-                    </td>
-                  </tr>
+                    <tr
+                      key={income.name}
+                      onClick={(event) => updateElement(income, event)}
+                    >
+                      <td>{income.name}</td>
+                      <td>{addThousandSeparators(income.value, 'Ft')}</td>
+                      <td>
+                        <span className={styles.delete_button} id={income._id}>
+                          <DeleteForeverIcon
+                            onClick={() =>
+                              handleDeleteClick(
+                                income._id,
+                                income.name,
+                                BudgetElements.income
+                              )
+                            }
+                          />
+                        </span>
+                      </td>
+                    </tr>
+                  </Tooltip>
                 ))}
               </tbody>
             </table>

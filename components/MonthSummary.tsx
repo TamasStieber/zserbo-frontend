@@ -40,7 +40,7 @@ const MonthSummary = ({
         currentMonthActualSavings += contributor.actual;
       }
     });
-  })
+  });
 
   if (!currentMonth.closed) {
     savings.forEach((saving) => {
@@ -147,7 +147,10 @@ const MonthSummary = ({
       tooltip: {
         callbacks: {
           label: (yDatapoint: any) => {
-            return `Amount: ${addThousandSeparators(yDatapoint.raw, 'Ft')}`;
+            return ` Amount: ${addThousandSeparators(
+              yDatapoint.raw,
+              'Ft'
+            )} (${Math.round((yDatapoint.raw / sumActualExpenses) * 100)}%)`;
           },
         },
       },

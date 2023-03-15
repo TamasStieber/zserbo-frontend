@@ -77,15 +77,23 @@ export default function Navbar() {
           >
             <MenuIcon onClick={handleSidebarOpen} />
           </div>
-          <div title='Help' className={styles.navbar_end_item}>
-            <HelpOutlineOutlinedIcon onClick={handleHelpOpen('paper')} />
+          <div
+            title='Help'
+            className={
+              pathname === '/help'
+                ? styles.navbar_end_item_active
+                : styles.navbar_end_item
+            }
+          >
+            {/* <HelpOutlineOutlinedIcon onClick={handleHelpOpen('paper')} /> */}
+            <HelpOutlineOutlinedIcon onClick={() => router.push('/help')} />
           </div>
           <div title='Logout' className={styles.navbar_end_item}>
             <LogoutOutlinedIcon onClick={handleLogout} />
           </div>
         </div>
       </div>
-      <Help open={open} closeHandler={handleClose} scroll={scroll} />
+      {/* <Help open={open} closeHandler={handleClose} scroll={scroll} /> */}
       <Sidebar
         open={sidebarOpen}
         closeHandler={handleSidebarClose}

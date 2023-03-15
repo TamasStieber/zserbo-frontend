@@ -1,27 +1,37 @@
-import { NextPage } from "next";
-import { useEffect, useState } from "react";
-import { useRouter } from "next/router";
+import { NextPage } from 'next';
+import { useEffect, useState } from 'react';
+import { useRouter } from 'next/router';
 import {
   Savings,
   Saving,
   SavingValues,
   FetchMethods,
   SavingToDelete,
-} from "../types/types";
-import PageContainer from "../components/layout/PageContainer";
-import DeleteForeverIcon from "@mui/icons-material/DeleteForever";
-import styles from "../styles/Home.module.css";
-import { Backdrop, Button, CircularProgress, Skeleton } from "@mui/material";
-import Dialog from "@mui/material/Dialog";
-import DialogActions from "@mui/material/DialogActions";
-import DialogContent from "@mui/material/DialogContent";
-import DialogTitle from "@mui/material/DialogTitle";
-import SavingDialog from "../components/SavingDialog";
-import { addThousandSeparators, showSuccessToast } from "../utils/utils";
-import WarningOutlinedIcon from "@mui/icons-material/WarningOutlined";
-import { ToastContainer } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
-import { NoSavingsFound } from "@/components/NoElementFound";
+} from '../types/types';
+import PageContainer from '../components/layout/PageContainer';
+import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
+import styles from '../styles/Home.module.css';
+import {
+  Backdrop,
+  Button,
+  CircularProgress,
+  Skeleton,
+  Tooltip,
+} from '@mui/material';
+import Dialog from '@mui/material/Dialog';
+import DialogActions from '@mui/material/DialogActions';
+import DialogContent from '@mui/material/DialogContent';
+import DialogTitle from '@mui/material/DialogTitle';
+import SavingDialog from '../components/SavingDialog';
+import {
+  addThousandSeparators,
+  formatDate,
+  showSuccessToast,
+} from '../utils/utils';
+import WarningOutlinedIcon from '@mui/icons-material/WarningOutlined';
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+import { NoSavingsFound } from '@/components/NoElementFound';
 
 const Savings: NextPage = () => {
   const router = useRouter();
@@ -63,7 +73,7 @@ const Savings: NextPage = () => {
   const updateElement = (element: Saving, event: React.MouseEvent) => {
     const { nodeName } = event.target as HTMLTableCellElement;
 
-    if (nodeName !== "svg" && nodeName !== "path") {
+    if (nodeName !== 'svg' && nodeName !== 'path') {
       setFetchMethod(FetchMethods.put);
       setInitialValues(element);
       handleOpen();
@@ -75,10 +85,10 @@ const Savings: NextPage = () => {
       setLoading(true);
       try {
         await fetch(`${process.env.BACKEND_URL}/savings/${id}`, {
-          method: "delete",
+          method: 'delete',
           headers: {
             Authorization: `Bearer ${token}`,
-            "Content-Type": "application/json",
+            'Content-Type': 'application/json',
           },
         });
 
@@ -105,7 +115,7 @@ const Savings: NextPage = () => {
     fetchMethod: FetchMethods,
     id?: string
   ): Promise<void> => {
-    id = id ? id : "";
+    id = id ? id : '';
 
     const insertSaving = async (token: string): Promise<void> => {
       setLoading(true);
@@ -117,7 +127,7 @@ const Savings: NextPage = () => {
             body: submitBody,
             headers: {
               Authorization: `Bearer ${token}`,
-              "Content-Type": "application/json",
+              'Content-Type': 'application/json',
             },
           }
         );
@@ -147,7 +157,7 @@ const Savings: NextPage = () => {
   const fetchSavings = async (token: string): Promise<void> => {
     try {
       const fetchResult = await fetch(`${process.env.BACKEND_URL}/savings`, {
-        method: "GET",
+        method: 'GET',
         headers: { Authorization: `Bearer ${token}` },
       });
       const data = await fetchResult.json();
@@ -170,7 +180,7 @@ const Savings: NextPage = () => {
   };
 
   useEffect(() => {
-    const storedJwtToken = localStorage.getItem("jwtToken");
+    const storedJwtToken = localStorage.getItem('jwtToken');
     if (storedJwtToken !== null) setJwtToken(storedJwtToken);
   }, []);
 
@@ -182,7 +192,7 @@ const Savings: NextPage = () => {
   }, [jwtToken, savingsListUpdated]);
 
   return (
-    <PageContainer title="Savings">
+    <PageContainer title='Savings'>
       {ready ? (
         <>
           {savings.length > 0 ? (
@@ -203,72 +213,83 @@ const Savings: NextPage = () => {
                   spent += spending.amount;
                 });
                 return (
-                  <div
+                  <Tooltip
+                    title={
+                      saving.date
+                        ? `Last modified: ${formatDate(saving.date)}`
+                        : ''
+                    }
+                    arrow
+                    enterDelay={500}
                     key={saving._id}
-                    className={styles.saving}
-                    onClick={(event) => updateElement(saving, event)}
                   >
-                    <div className={styles.saving_title}>
-                      <h2>{saving.name}</h2>
-                      <span className={styles.delete_button}>
-                        <DeleteForeverIcon
-                          onClick={() =>
-                            handleDeleteClick(saving._id, saving.name)
-                          }
-                        />
-                      </span>
-                    </div>
-                    <div className={styles.saving_primary}>
-                      <span className={styles.saving_actual}>
-                        {addThousandSeparators(actual, "Ft")}
-                      </span>
-                      {" / "}
-                      <span className={styles.saving_goal}>
-                        {addThousandSeparators(saving.goal, "Ft")}
-                      </span>
-                    </div>
-                    <div className={styles.progress_container}>
-                      <div
-                        className={styles.progress_bar}
-                        style={{
-                          width:
-                            actual / saving.goal > 0
-                              ? `${(actual / saving.goal) * 100}%`
-                              : 0,
-                        }}
-                      >
-                        {Math.floor((actual / saving.goal) * 100)}%
+                    <div
+                      key={saving._id}
+                      className={styles.saving}
+                      onClick={(event) => updateElement(saving, event)}
+                    >
+                      <div className={styles.saving_title}>
+                        <h2>{saving.name}</h2>
+                        <span className={styles.delete_button}>
+                          <DeleteForeverIcon
+                            onClick={() =>
+                              handleDeleteClick(saving._id, saving.name)
+                            }
+                          />
+                        </span>
+                      </div>
+                      <div className={styles.saving_primary}>
+                        <span className={styles.saving_actual}>
+                          {addThousandSeparators(actual, 'Ft')}
+                        </span>
+                        {' / '}
+                        <span className={styles.saving_goal}>
+                          {addThousandSeparators(saving.goal, 'Ft')}
+                        </span>
+                      </div>
+                      <div className={styles.progress_container}>
+                        <div
+                          className={styles.progress_bar}
+                          style={{
+                            width:
+                              actual / saving.goal > 0
+                                ? `${(actual / saving.goal) * 100}%`
+                                : 0,
+                          }}
+                        >
+                          {Math.floor((actual / saving.goal) * 100)}%
+                        </div>
+                      </div>
+                      <div className={styles.saving_secondary}>
+                        <div className={styles.saving_secondary_element}>
+                          <p>Planned</p>
+                          {addThousandSeparators(planned, 'Ft')}
+                        </div>
+                        <div className={styles.saving_secondary_element}>
+                          <p>Contributed</p>
+                          {addThousandSeparators(contributed, 'Ft')}
+                        </div>
+                        <div className={styles.saving_secondary_element}>
+                          <p>Spent</p>
+                          {addThousandSeparators(spent, 'Ft')}
+                        </div>
+                        <div className={styles.saving_secondary_element}>
+                          <p>Initial</p>
+                          {addThousandSeparators(saving.initial, 'Ft')}
+                        </div>
+                      </div>
+                      <div className={styles.saving_comment}>
+                        {saving.comment}
                       </div>
                     </div>
-                    <div className={styles.saving_secondary}>
-                      <div className={styles.saving_secondary_element}>
-                        <p>Planned</p>
-                        {addThousandSeparators(planned, "Ft")}
-                      </div>
-                      <div className={styles.saving_secondary_element}>
-                        <p>Contributed</p>
-                        {addThousandSeparators(contributed, "Ft")}
-                      </div>
-                      <div className={styles.saving_secondary_element}>
-                        <p>Spent</p>
-                        {addThousandSeparators(spent, "Ft")}
-                      </div>
-                      <div className={styles.saving_secondary_element}>
-                        <p>Initial</p>
-                        {addThousandSeparators(saving.initial, "Ft")}
-                      </div>
-                    </div>
-                    <div className={styles.saving_comment}>
-                      {saving.comment}
-                    </div>
-                  </div>
+                  </Tooltip>
                 );
               })}
             </div>
           ) : (
             <NoSavingsFound />
           )}
-          <Button variant="contained" onClick={addElement}>
+          <Button variant='contained' onClick={addElement}>
             Add
           </Button>
           <SavingDialog
@@ -285,17 +306,17 @@ const Savings: NextPage = () => {
             itemToDelete={itemToDelete}
           />
           <ToastContainer />
-          <Backdrop sx={{ color: "#fff", zIndex: 1000 }} open={loading}>
-            <CircularProgress color="success" />
+          <Backdrop sx={{ color: '#fff', zIndex: 1000 }} open={loading}>
+            <CircularProgress color='success' />
           </Backdrop>
         </>
       ) : (
         <>
           <Skeleton
-            animation="wave"
-            variant="rounded"
+            animation='wave'
+            variant='rounded'
             height={500}
-            sx={{ marginBottom: "10px", borderRadius: "10px" }}
+            sx={{ marginBottom: '10px', borderRadius: '10px' }}
           />
         </>
       )}
@@ -319,16 +340,16 @@ const ConfirmationDialog = ({
   } else {
     return (
       <Dialog open={open} onClose={closeHandler}>
-        <DialogTitle sx={{ color: "#ed6c02", borderTop: "5px solid #ed6c02" }}>
+        <DialogTitle sx={{ color: '#ed6c02', borderTop: '5px solid #ed6c02' }}>
           Warning!
         </DialogTitle>
         <DialogContent>
           <div className={styles.confirmation_dialog}>
             <div
               className={styles.icon_container}
-              style={{ color: "#ed6c02", marginRight: "20px" }}
+              style={{ color: '#ed6c02', marginRight: '20px' }}
             >
-              <WarningOutlinedIcon sx={{ fontSize: "3rem" }} />
+              <WarningOutlinedIcon sx={{ fontSize: '3rem' }} />
             </div>
             Do you really want to delete {itemToDelete.name}?
           </div>
@@ -336,8 +357,8 @@ const ConfirmationDialog = ({
         <DialogActions>
           <Button onClick={closeHandler}>Cancel</Button>
           <Button
-            variant="contained"
-            color="warning"
+            variant='contained'
+            color='warning'
             onClick={() => {
               deleteHandler(itemToDelete.id);
               closeHandler();
