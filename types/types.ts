@@ -24,6 +24,7 @@ export type Income = {
   _id: string,
   name: string,
   value: number,
+  date?: Date,
 }
 
 export type Budget = {
@@ -32,6 +33,7 @@ export type Budget = {
   plan: number,
   actual: number,
   categoryId: number
+  date?: Date,
 }
 
 export type Month = {
@@ -47,6 +49,8 @@ export type Month = {
   budget: Budget[],
   comment: string,
   sumAllSavings: number,
+  date?: Date,
+  closedAt?: Date,
 }
 
 export type Contributor = {
@@ -54,12 +58,14 @@ export type Contributor = {
   monthId: string,
   plan: number,
   actual: number
+  date?: Date,
 }
 
 export type Spending = {
   _id: string,
   amount: number,
   monthId: string
+  date?: Date,
 }
 
 export type Saving = {
@@ -72,6 +78,7 @@ export type Saving = {
   comment: string,
   contributors: Contributor[],
   spendings: Spending[]
+  date?: Date,
 }
 
 export type Savings = Saving[];
@@ -86,15 +93,6 @@ export type FoodEntry = {
     unit: string;
   };
   createdAt: Date;
-};
-
-export type FoodEntries = FoodEntry[];
-
-export type FoodFormValues = {
-  id: string;
-  name: string;
-  amount: number | string;
-  unit: string;
 };
 
 export type MonthValues = {
@@ -184,20 +182,6 @@ export type NewMonthFormProps = {
   initialValues: NewMonthValues,
   months: Months,
   fetchMethod: FetchMethods
-}
-
-export type FoodFormProps = {
-  closeHandler: () => void,
-  submitHandler: (submitBody: BodyInit, id: string, fetchMethod: string) => Promise<void>,
-  initialValues: FoodFormValues,
-  fetchMethod: string
-}
-
-export type FoodElementProps = {
-  foodEntries: FoodEntries,
-  deleteHandler: (id: string) => Promise<void>,
-  submitHandler: (submitBody: BodyInit, id: string, fetchMethod: string) => Promise<void>,
-  children?: ReactNode;
 }
 
 export type BudgetElementDialogProps = {
@@ -301,7 +285,7 @@ export type Category = {
 
 export type MonthSummaryProps = {
   currentMonth: Month;
-  predecessor: Month | undefined
+  predecessor: Month | undefined;
   savings: Savings;
 }
 

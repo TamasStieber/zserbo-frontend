@@ -14,10 +14,11 @@ import {
   DialogActions,
   DialogContent,
   DialogTitle,
+  Tooltip,
 } from '@mui/material';
 import { useState } from 'react';
 import BudgetElementDialog from './BudgetElementDialog';
-import { addThousandSeparators } from '../utils/utils';
+import { addThousandSeparators, formatDate } from '../utils/utils';
 import { categories } from './Categories';
 import WarningOutlinedIcon from '@mui/icons-material/WarningOutlined';
 
@@ -97,39 +98,50 @@ const ExpensesTable = ({
                 {expenses.map((expense) => {
                   const Icon = categories[expense.categoryId].icon;
                   return (
-                    <tr
+                    <Tooltip
+                      title={
+                        expense.date
+                          ? `Last modified: ${formatDate(expense.date)}`
+                          : ''
+                      }
+                      arrow
+                      enterDelay={500}
                       key={expense.name}
-                      onClick={(event) => updateElement(expense, event)}
                     >
-                      <td>
-                        <div
-                          className={styles.icon_container_small}
-                          style={{
-                            backgroundColor:
-                              categories[expense.categoryId].color,
-                          }}
-                          title={categories[expense.categoryId].name}
-                        >
-                          <Icon />
-                        </div>
-                      </td>
-                      <td>{expense.name}</td>
-                      <td>{addThousandSeparators(expense.plan, 'Ft')}</td>
-                      <td>{addThousandSeparators(expense.actual, 'Ft')}</td>
-                      <td>
-                        <span className={styles.delete_button}>
-                          <DeleteForeverIcon
-                            onClick={() =>
-                              handleDeleteClick(
-                                expense._id,
-                                expense.name,
-                                BudgetElements.expense
-                              )
-                            }
-                          />
-                        </span>
-                      </td>
-                    </tr>
+                      <tr
+                        key={expense.name}
+                        onClick={(event) => updateElement(expense, event)}
+                      >
+                        <td>
+                          <div
+                            className={styles.icon_container_small}
+                            style={{
+                              backgroundColor:
+                                categories[expense.categoryId].color,
+                            }}
+                            title={categories[expense.categoryId].name}
+                          >
+                            <Icon />
+                          </div>
+                        </td>
+                        <td>{expense.name}</td>
+                        <td>{addThousandSeparators(expense.plan, 'Ft')}</td>
+                        <td>{addThousandSeparators(expense.actual, 'Ft')}</td>
+                        <td>
+                          <span className={styles.delete_button}>
+                            <DeleteForeverIcon
+                              onClick={() =>
+                                handleDeleteClick(
+                                  expense._id,
+                                  expense.name,
+                                  BudgetElements.expense
+                                )
+                              }
+                            />
+                          </span>
+                        </td>
+                      </tr>
+                    </Tooltip>
                   );
                 })}
               </tbody>

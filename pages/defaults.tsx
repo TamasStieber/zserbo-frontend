@@ -1,15 +1,15 @@
-import { NextPage } from "next";
-import { useEffect, useState } from "react";
-import { useRouter } from "next/router";
-import { BudgetElements, Defaults, FetchMethods } from "../types/types";
-import PageContainer from "../components/layout/PageContainer";
-import styles from "../styles/Home.module.css";
-import IncomesTable from "../components/IncomesTable";
-import ExpensesTable from "../components/ExpensesTable";
-import { ToastContainer } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
-import { showSuccessToast } from "@/utils/utils";
-import { Backdrop, CircularProgress, Skeleton } from "@mui/material";
+import { NextPage } from 'next';
+import { useEffect, useState } from 'react';
+import { useRouter } from 'next/router';
+import { BudgetElements, Defaults, FetchMethods } from '../types/types';
+import PageContainer from '../components/layout/PageContainer';
+import styles from '../styles/Home.module.css';
+import IncomesTable from '../components/IncomesTable';
+import ExpensesTable from '../components/ExpensesTable';
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+import { showErrorToast, showSuccessToast } from '@/utils/utils';
+import { Backdrop, CircularProgress, Skeleton } from '@mui/material';
 
 const Defaults: NextPage = () => {
   const router = useRouter();
@@ -27,30 +27,44 @@ const Defaults: NextPage = () => {
   ): Promise<void> => {
     const fetchDelete = async (token: string): Promise<void> => {
       try {
-        setLoading(true)
-        await fetch(`${process.env.BACKEND_URL}/defaults/${type}/${id}`, {
-          method: "delete",
-          headers: {
-            Authorization: `Bearer ${token}`,
-            "Content-Type": "application/json",
-          },
-        });
+        setLoading(true);
+        const fetchResult = await fetch(
+          `${process.env.BACKEND_URL}/defaults/${type}/${id}`,
+          {
+            method: 'delete',
+            headers: {
+              Authorization: `Bearer ${token}`,
+              'Content-Type': 'application/json',
+            },
+          }
+        );
 
-        const found =
-          type === BudgetElements.income
-            ? defaults?.income.find((income) => income._id === id)
-            : defaults?.budget.find((budget) => budget._id === id);
-        if (found)
-          {showSuccessToast({
-            subject: found.name,
-            fetchMethod: FetchMethods.delete,
-          });
-          setDefaultsListUpdated(!defaultsListUpdated);
-          setLoading(false)
+        const data = await fetchResult.json();
+
+        if (data.error) {
+          console.error(data.error);
+          setLoading(false);
+          showErrorToast();
+        } else {
+          const found =
+            type === BudgetElements.income
+              ? defaults?.income.find((income) => income._id === data.id)
+              : defaults?.budget.find((budget) => budget._id === data.id);
+          if (found) {
+            showSuccessToast({
+              subject: found.name,
+              fetchMethod: FetchMethods.delete,
+            });
+            setDefaultsListUpdated(!defaultsListUpdated);
+          } else {
+            showErrorToast();
+          }
+          setLoading(false);
         }
       } catch (error) {
         console.error(error);
-        setLoading(false)
+        setLoading(false);
+        showErrorToast();
       }
     };
 
@@ -60,7 +74,7 @@ const Defaults: NextPage = () => {
   const fetchDefaults = async (token: string): Promise<void> => {
     try {
       const fetchResult = await fetch(`${process.env.BACKEND_URL}/defaults`, {
-        method: "GET",
+        method: 'GET',
         headers: { Authorization: `Bearer ${token}` },
       });
       const data = await fetchResult.json();
@@ -81,10 +95,10 @@ const Defaults: NextPage = () => {
     fetchMethod: FetchMethods,
     id?: string
   ): Promise<void> => {
-    id = id ? id : "";
+    id = id ? id : '';
 
     const insertDefault = async (token: string): Promise<void> => {
-      setLoading(true)
+      setLoading(true);
       try {
         const fetchResult = await fetch(
           `${process.env.BACKEND_URL}/defaults/${id}`,
@@ -93,7 +107,7 @@ const Defaults: NextPage = () => {
             body: submitBody,
             headers: {
               Authorization: `Bearer ${token}`,
-              "Content-Type": "application/json",
+              'Content-Type': 'application/json',
             },
           }
         );
@@ -102,18 +116,20 @@ const Defaults: NextPage = () => {
 
         if (result.error) {
           console.error(result.error);
-          setLoading(false)
+          setLoading(false);
+          showErrorToast();
         } else {
+          setLoading(false);
           showSuccessToast({
             subject: result.default.name,
             fetchMethod: fetchMethod,
           });
           setDefaultsListUpdated(!defaultsListUpdated);
-          setLoading(false)
         }
       } catch (error) {
         console.error(error);
-        setLoading(false)
+        setLoading(false);
+        showErrorToast();
       }
     };
 
@@ -121,7 +137,7 @@ const Defaults: NextPage = () => {
   };
 
   useEffect(() => {
-    const storedJwtToken = localStorage.getItem("jwtToken");
+    const storedJwtToken = localStorage.getItem('jwtToken');
     if (storedJwtToken !== null) setJwtToken(storedJwtToken);
   }, []);
 
@@ -133,7 +149,7 @@ const Defaults: NextPage = () => {
   }, [jwtToken, defaultsListUpdated]);
 
   return (
-    <PageContainer title="Defaults">
+    <PageContainer title='Defaults'>
       {ready ? (
         <>
           <div className={styles.column_container}>
@@ -153,17 +169,17 @@ const Defaults: NextPage = () => {
             </div>
           </div>
           <ToastContainer />
-          <Backdrop sx={{ color: "#fff", zIndex: 1000 }} open={loading}>
-            <CircularProgress color="success" />
+          <Backdrop sx={{ color: '#fff', zIndex: 1000 }} open={loading}>
+            <CircularProgress color='success' />
           </Backdrop>
         </>
       ) : (
         <>
           <Skeleton
-            animation="wave"
-            variant="rounded"
+            animation='wave'
+            variant='rounded'
             height={500}
-            sx={{ marginBottom: "10px", borderRadius: "10px" }}
+            sx={{ marginBottom: '10px', borderRadius: '10px' }}
           />
         </>
       )}

@@ -1,6 +1,6 @@
-import { categories } from "@/components/Categories";
-import PageContainer from "@/components/layout/PageContainer";
-import { NextPage } from "next";
+import { categories } from '@/components/Categories';
+import PageContainer from '@/components/layout/PageContainer';
+import { NextPage } from 'next';
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -11,18 +11,18 @@ import {
   Title,
   Tooltip,
   Legend,
-} from "chart.js";
-import { Line, Bar } from "react-chartjs-2";
-import { useState, useEffect } from "react";
-import styles from "../styles/Home.module.css";
-import { addThousandSeparators } from "@/utils/utils";
-import TrendingUpIcon from "@mui/icons-material/TrendingUp";
-import TrendingDownIcon from "@mui/icons-material/TrendingDown";
-import SavingsOutlinedIcon from "@mui/icons-material/SavingsOutlined";
-import { Months, Savings } from "@/types/types";
-import DashboardAverage from "@/components/DashboardAverage";
-import { NoMonthsFound } from "@/components/NoElementFound";
-import { Skeleton } from "@mui/material";
+} from 'chart.js';
+import { Line, Bar } from 'react-chartjs-2';
+import { useState, useEffect } from 'react';
+import styles from '../styles/Home.module.css';
+import { addThousandSeparators } from '@/utils/utils';
+import TrendingUpIcon from '@mui/icons-material/TrendingUp';
+import TrendingDownIcon from '@mui/icons-material/TrendingDown';
+import SavingsIcon from '@mui/icons-material/Savings';
+import { Months, Savings } from '@/types/types';
+import DashboardAverage from '@/components/DashboardAverage';
+import { NoMonthsFound } from '@/components/NoElementFound';
+import { Skeleton } from '@mui/material';
 
 ChartJS.register(
   CategoryScale,
@@ -124,7 +124,7 @@ const Home: NextPage = () => {
       data: number[];
       backgroundColor: string[];
     } = {
-      label: "Amount",
+      label: 'Amount',
       data: [],
       backgroundColor: [],
     };
@@ -163,16 +163,20 @@ const Home: NextPage = () => {
     });
 
     datasets.push({
-      label: "Actual Expenses",
+      label: 'Actual Expenses',
       data: actualData,
-      borderColor: "rgb(255, 99, 132)",
-      backgroundColor: "rgba(255, 99, 132, 1)",
+      // borderColor: "rgb(255, 99, 132)",
+      // backgroundColor: "rgba(255, 99, 132, 1)",
+      borderColor: '#bb28cd',
+      backgroundColor: '#bb28cd',
     });
     datasets.push({
-      label: "Planned Expenses",
+      label: 'Planned Expenses',
       data: planData,
-      borderColor: "rgb(53, 162, 235)",
-      backgroundColor: "rgba(53, 162, 235, 1)",
+      // borderColor: "rgb(53, 162, 235)",
+      // backgroundColor: "rgba(53, 162, 235, 1)",
+      borderColor: '#2db0ca',
+      backgroundColor: '#2db0ca',
     });
 
     return {
@@ -192,28 +196,28 @@ const Home: NextPage = () => {
     plugins: {
       legend: {
         display: true,
-        position: "bottom" as const,
+        position: 'bottom' as const,
       },
       tooltip: {
         callbacks: {
           label: (context: any) => {
             return `${context.dataset.label}: ${addThousandSeparators(
               context.parsed.y,
-              "Ft"
+              'Ft'
             )}`;
           },
         },
       },
       title: {
         display: false,
-        text: "Chart.js Line Chart",
+        text: 'Chart.js Line Chart',
       },
     },
     scales: {
       y: {
         ticks: {
           callback: (value: any) => {
-            return addThousandSeparators(value, "Ft");
+            return addThousandSeparators(value, 'Ft');
           },
         },
       },
@@ -232,21 +236,21 @@ const Home: NextPage = () => {
           label: (context: any) => {
             return `${context.dataset.label}: ${addThousandSeparators(
               context.parsed.y,
-              "Ft"
+              'Ft'
             )}`;
           },
         },
       },
       title: {
         display: false,
-        text: "Chart.js Line Chart",
+        text: 'Chart.js Line Chart',
       },
     },
     scales: {
       y: {
         ticks: {
           callback: (value: any) => {
-            return addThousandSeparators(value, "Ft");
+            return addThousandSeparators(value, 'Ft');
           },
         },
       },
@@ -255,8 +259,8 @@ const Home: NextPage = () => {
 
   const fetchMonths = async (token: string): Promise<void> => {
     try {
-      const fetchResult = await fetch(process.env.BACKEND_URL + "/months", {
-        method: "GET",
+      const fetchResult = await fetch(process.env.BACKEND_URL + '/months', {
+        method: 'GET',
         headers: { Authorization: `Bearer ${token}` },
       });
       const data = await fetchResult.json();
@@ -274,8 +278,8 @@ const Home: NextPage = () => {
 
   const fetchSavings = async (token: string): Promise<void> => {
     try {
-      const fetchResult = await fetch(process.env.BACKEND_URL + "/savings", {
-        method: "GET",
+      const fetchResult = await fetch(process.env.BACKEND_URL + '/savings', {
+        method: 'GET',
         headers: { Authorization: `Bearer ${token}` },
       });
       const data = await fetchResult.json();
@@ -292,7 +296,7 @@ const Home: NextPage = () => {
   };
 
   useEffect(() => {
-    const storedJwtToken = localStorage.getItem("jwtToken");
+    const storedJwtToken = localStorage.getItem('jwtToken');
     if (storedJwtToken !== null) setJwtToken(storedJwtToken);
   }, []);
 
@@ -305,7 +309,7 @@ const Home: NextPage = () => {
   }, [jwtToken]);
 
   return (
-    <PageContainer title="Dashboard">
+    <PageContainer title='Dashboard'>
       {monthsReady && savingsReady ? (
         <>
           {months && months.length > 0 ? (
@@ -313,21 +317,21 @@ const Home: NextPage = () => {
               <div className={styles.dashboard_averages}>
                 <DashboardAverage
                   average={averageIncome.average}
-                  primary={"Average Income"}
-                  secondary={"Across all months"}
-                  icon={<TrendingUpIcon style={{ color: "#398f1f" }} />}
+                  primary={'Average Income'}
+                  secondary={'Across all months'}
+                  icon={<TrendingUpIcon />}
                 />
                 <DashboardAverage
                   average={averageExpenses.average}
-                  primary={"Average Expenses"}
-                  secondary={"Across all months"}
-                  icon={<TrendingDownIcon style={{ color: "#b30000" }} />}
+                  primary={'Average Expenses'}
+                  secondary={'Across all months'}
+                  icon={<TrendingDownIcon />}
                 />
                 <DashboardAverage
                   average={sumAllSavings}
-                  primary={"All Savings"}
-                  secondary={"Across all months"}
-                  icon={<SavingsOutlinedIcon style={{ color: "#1976d2" }} />}
+                  primary={'All Savings'}
+                  secondary={'Across all months'}
+                  icon={<SavingsIcon />}
                 />
               </div>
               <div className={styles.dashboard_charts}>
@@ -355,10 +359,10 @@ const Home: NextPage = () => {
       ) : (
         <>
           <Skeleton
-            animation="wave"
-            variant="rounded"
+            animation='wave'
+            variant='rounded'
             height={500}
-            sx={{ marginBottom: "10px", borderRadius: "10px" }}
+            sx={{ marginBottom: '10px', borderRadius: '10px' }}
           />
         </>
       )}

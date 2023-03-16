@@ -1,16 +1,16 @@
-import { NextPage } from "next";
-import { useEffect, useState } from "react";
-import { useRouter } from "next/router";
-import { Months } from "../types/types";
-import PageContainer from "../components/layout/PageContainer";
-import styles from "../styles/Home.module.css";
-import { Button, ButtonGroup, IconButton, Skeleton } from "@mui/material";
-import TextField from "@mui/material/TextField";
-import { addThousandSeparators } from "../utils/utils";
-import { categories } from "@/components/Categories";
-import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
-import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
-import { NoMonthsFound } from "@/components/NoElementFound";
+import { NextPage } from 'next';
+import { useEffect, useState } from 'react';
+import { useRouter } from 'next/router';
+import { Months } from '../types/types';
+import PageContainer from '../components/layout/PageContainer';
+import styles from '../styles/Home.module.css';
+import { Button, ButtonGroup, IconButton, Skeleton } from '@mui/material';
+import TextField from '@mui/material/TextField';
+import { addThousandSeparators } from '../utils/utils';
+import { categories } from '@/components/Categories';
+import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
+import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
+import { NoMonthsFound } from '@/components/NoElementFound';
 
 const Averages: NextPage = () => {
   const router = useRouter();
@@ -18,22 +18,22 @@ const Averages: NextPage = () => {
   const [jwtToken, setJwtToken] = useState<string | null>(null);
   const [ready, setReady] = useState<boolean>(false);
   const [months, setMonths] = useState<Months | null>(null);
-  const [filter, setFilter] = useState<string>("");
-  const [orderBy, setOrderBy] = useState<"name" | "value">("name");
-  const [orderDirection, setOrderDirection] = useState<"up" | "down">("up");
+  const [filter, setFilter] = useState<string>('');
+  const [orderBy, setOrderBy] = useState<'name' | 'value'>('name');
+  const [orderDirection, setOrderDirection] = useState<'up' | 'down'>('up');
 
   const orderByNameButtonVariant =
-    orderBy === "name" ? "contained" : "outlined";
+    orderBy === 'name' ? 'contained' : 'outlined';
   const orderByValueButtonVariant =
-    orderBy === "value" ? "contained" : "outlined";
-  const upButtonVariant = orderDirection === "up" ? "contained" : "outlined";
+    orderBy === 'value' ? 'contained' : 'outlined';
+  const upButtonVariant = orderDirection === 'up' ? 'contained' : 'outlined';
   const downButtonVariant =
-    orderDirection === "down" ? "contained" : "outlined";
+    orderDirection === 'down' ? 'contained' : 'outlined';
 
   const fetchMonths = async (token: string): Promise<void> => {
     try {
       const fetchResult = await fetch(`${process.env.BACKEND_URL}/months`, {
-        method: "GET",
+        method: 'GET',
         headers: { Authorization: `Bearer ${token}` },
       });
       const data = await fetchResult.json();
@@ -89,16 +89,16 @@ const Averages: NextPage = () => {
     element.name.toLowerCase().includes(filter)
   );
 
-  if (orderBy === "name" && orderDirection === "up") {
-    filteredAverages.sort((a, b) => a.name.localeCompare(b.name, "hu"));
+  if (orderBy === 'name' && orderDirection === 'up') {
+    filteredAverages.sort((a, b) => a.name.localeCompare(b.name, 'hu'));
   }
-  if (orderBy === "name" && orderDirection === "down") {
-    filteredAverages.sort((a, b) => b.name.localeCompare(a.name, "hu"));
+  if (orderBy === 'name' && orderDirection === 'down') {
+    filteredAverages.sort((a, b) => b.name.localeCompare(a.name, 'hu'));
   }
-  if (orderBy === "value" && orderDirection === "up") {
+  if (orderBy === 'value' && orderDirection === 'up') {
     filteredAverages.sort((a, b) => a.amount - b.amount);
   }
-  if (orderBy === "value" && orderDirection === "down") {
+  if (orderBy === 'value' && orderDirection === 'down') {
     filteredAverages.sort((a, b) => b.amount - a.amount);
   }
 
@@ -107,7 +107,7 @@ const Averages: NextPage = () => {
   };
 
   useEffect(() => {
-    const storedJwtToken = localStorage.getItem("jwtToken");
+    const storedJwtToken = localStorage.getItem('jwtToken');
     if (storedJwtToken !== null) setJwtToken(storedJwtToken);
     if (jwtToken) fetchMonths(jwtToken);
   }, [jwtToken]);
@@ -115,7 +115,7 @@ const Averages: NextPage = () => {
   useEffect(() => {});
 
   return (
-    <PageContainer title="Averages">
+    <PageContainer title='Averages'>
       {ready ? (
         <>
           {months && months.length > 0 ? (
@@ -129,13 +129,13 @@ const Averages: NextPage = () => {
                   <ButtonGroup sx={{ marginLeft: 2 }}>
                     <Button
                       variant={orderByNameButtonVariant}
-                      onClick={() => setOrderBy("name")}
+                      onClick={() => setOrderBy('name')}
                     >
                       Name
                     </Button>
                     <Button
                       variant={orderByValueButtonVariant}
-                      onClick={() => setOrderBy("value")}
+                      onClick={() => setOrderBy('value')}
                     >
                       Value
                     </Button>
@@ -143,13 +143,13 @@ const Averages: NextPage = () => {
                   <ButtonGroup sx={{ marginLeft: 2 }}>
                     <Button
                       variant={upButtonVariant}
-                      onClick={() => setOrderDirection("up")}
+                      onClick={() => setOrderDirection('up')}
                     >
                       <KeyboardArrowUpIcon />
                     </Button>
                     <Button
                       variant={downButtonVariant}
-                      onClick={() => setOrderDirection("down")}
+                      onClick={() => setOrderDirection('down')}
                     >
                       <KeyboardArrowDownIcon />
                     </Button>
@@ -157,8 +157,8 @@ const Averages: NextPage = () => {
                 </div>
                 <div className={styles.averages_search}>
                   <TextField
-                    label="Search"
-                    size="small"
+                    label='Search'
+                    size='small'
                     onChange={(event) => filterAverages(event)}
                   />
                 </div>
@@ -179,6 +179,7 @@ const Averages: NextPage = () => {
                           }}
                         >
                           <div
+                            title={categories[average.categoryId].name}
                             className={styles.average_icon}
                             style={{
                               backgroundColor:
@@ -191,7 +192,7 @@ const Averages: NextPage = () => {
                             <div className={styles.average_primary}>
                               {addThousandSeparators(
                                 Math.round(average.amount / average.count),
-                                "Ft"
+                                'Ft'
                               )}
                             </div>
                             <div className={styles.average_secondary}>
@@ -214,10 +215,10 @@ const Averages: NextPage = () => {
       ) : (
         <>
           <Skeleton
-            animation="wave"
-            variant="rounded"
+            animation='wave'
+            variant='rounded'
             height={500}
-            sx={{ marginBottom: "10px", borderRadius: "10px" }}
+            sx={{ marginBottom: '10px', borderRadius: '10px' }}
           />
         </>
       )}

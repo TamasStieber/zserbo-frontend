@@ -13,9 +13,14 @@ import {
   DialogActions,
   DialogContent,
   DialogTitle,
+  Tooltip,
 } from '@mui/material';
 import { useState } from 'react';
-import { addThousandSeparators, showWarningToast } from '../utils/utils';
+import {
+  addThousandSeparators,
+  formatDate,
+  showWarningToast,
+} from '../utils/utils';
 import ContributionDialog from './ContributionDialog';
 import WarningOutlinedIcon from '@mui/icons-material/WarningOutlined';
 import { ToastContainer } from 'react-toastify';
@@ -121,33 +126,49 @@ const SavingsTable = ({
               </thead>
               <tbody>
                 {savingsOfMonth.map((element) => (
-                  <tr
-                    key={element.contributor._id}
-                    onClick={(event) =>
-                      updateElement(element.id, element.contributor, event)
+                  <Tooltip
+                    title={
+                      element.contributor.date
+                        ? `Last modified: ${formatDate(
+                            element.contributor.date
+                          )}`
+                        : ''
                     }
+                    arrow
+                    enterDelay={500}
+                    key={element.contributor._id}
                   >
-                    <td>{element.name}</td>
-                    <td>
-                      {addThousandSeparators(element.contributor.plan, 'Ft')}
-                    </td>
-                    <td>
-                      {addThousandSeparators(element.contributor.actual, 'Ft')}
-                    </td>
-                    <td>
-                      <span className={styles.delete_button}>
-                        <DeleteForeverIcon
-                          onClick={() =>
-                            handleDeleteClick(
-                              element.contributor._id,
-                              element.id,
-                              element.name
-                            )
-                          }
-                        />
-                      </span>
-                    </td>
-                  </tr>
+                    <tr
+                      key={element.contributor._id}
+                      onClick={(event) =>
+                        updateElement(element.id, element.contributor, event)
+                      }
+                    >
+                      <td>{element.name}</td>
+                      <td>
+                        {addThousandSeparators(element.contributor.plan, 'Ft')}
+                      </td>
+                      <td>
+                        {addThousandSeparators(
+                          element.contributor.actual,
+                          'Ft'
+                        )}
+                      </td>
+                      <td>
+                        <span className={styles.delete_button}>
+                          <DeleteForeverIcon
+                            onClick={() =>
+                              handleDeleteClick(
+                                element.contributor._id,
+                                element.id,
+                                element.name
+                              )
+                            }
+                          />
+                        </span>
+                      </td>
+                    </tr>
+                  </Tooltip>
                 ))}
               </tbody>
             </table>

@@ -23,10 +23,12 @@ const MonthSummary = ({
 }: MonthSummaryProps) => {
   const savingsTitle = currentMonth.closed ? 'Savings at close' : 'All Savings';
   let sumAllSavings = currentMonth.closed ? currentMonth.sumAllSavings : 0;
+  let predecessorSavings =
+    predecessor && predecessor.closed ? predecessor.sumAllSavings : 0;
   let sumPlannedIncome = 0;
   let sumPlannedExpenses = 0;
   let sumActualExpenses = 0;
-  let opening = currentMonth.opening;
+  let opening = currentMonth.opening - predecessorSavings;
   let balance = currentMonth.balance;
   let actualRemaining = 0;
   let plannedRemaining = 0;
@@ -40,7 +42,7 @@ const MonthSummary = ({
         currentMonthActualSavings += contributor.actual;
       }
     });
-  })
+  });
 
   if (!currentMonth.closed) {
     savings.forEach((saving) => {
@@ -147,7 +149,10 @@ const MonthSummary = ({
       tooltip: {
         callbacks: {
           label: (yDatapoint: any) => {
-            return `Amount: ${addThousandSeparators(yDatapoint.raw, 'Ft')}`;
+            return ` Amount: ${addThousandSeparators(
+              yDatapoint.raw,
+              'Ft'
+            )} (${Math.round((yDatapoint.raw / sumActualExpenses) * 100)}%)`;
           },
         },
       },
@@ -181,7 +186,10 @@ const MonthSummary = ({
             />
           </div>
           <div className={styles.month_summary_row_secondary}>
-            <MonthSummarySecondaryElement amount={opening} text={'Opening'} />
+            <MonthSummarySecondaryElement
+              amount={opening}
+              text={'Real opening'}
+            />
             <MonthSummarySecondaryElement
               amount={sumPlannedIncome}
               text={'Planned income'}

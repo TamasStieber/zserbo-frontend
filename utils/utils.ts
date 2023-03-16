@@ -77,3 +77,28 @@ export const showWarningToast = (message: string) => {
         theme: "light",
         });
 }
+
+export const showErrorToast = () => {
+    toast.error('Oops! An error occurred', {
+        position: "bottom-left",
+        autoClose: 3000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: false,
+        progress: undefined,
+        theme: "light",
+        });
+}
+
+export const formatDate = (date: Date) => {
+    date = new Date(date)
+    const year = new Intl.DateTimeFormat('en', { year: 'numeric' }).format(date);
+    const month = new Intl.DateTimeFormat('en', { month: 'short' }).format(date);
+    const day = new Intl.DateTimeFormat('en', { day: '2-digit' }).format(date);
+
+    const hour = (date.getHours() < 10 ? '0' : '') + date.getHours()
+    const minute = (date.getMinutes() < 10 ? '0' : '') + date.getMinutes()
+
+    return `${year} ${month} ${day}, ${hour}:${minute}`
+}

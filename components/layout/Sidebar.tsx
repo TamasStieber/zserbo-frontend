@@ -7,6 +7,7 @@ import PetsIcon from '@mui/icons-material/Pets';
 import LogoutOutlinedIcon from '@mui/icons-material/LogoutOutlined';
 import HelpOutlineOutlinedIcon from '@mui/icons-material/HelpOutlineOutlined';
 import * as _ from 'lodash';
+import Image from 'next/image';
 
 const Sidebar = ({
   open,
@@ -26,7 +27,14 @@ const Sidebar = ({
     <Drawer anchor='left' open={open} onClose={closeHandler}>
       <div style={{ width: '70vw' }} className={styles.sidebar}>
         <div className={styles.title} onClick={() => router.push('/')}>
-          <PetsIcon />
+          {/* <PetsIcon /> */}
+          <Image
+            src='/img/logo_white.png'
+            alt='logo'
+            width='30'
+            height='30'
+            style={{ marginRight: 10 }}
+          />
           <h1>Zserbó</h1>
         </div>
         <hr />
@@ -47,7 +55,7 @@ const Sidebar = ({
         })}
         <div className={styles.sidebar_end}>
           <div title='Help' className={styles.sidebar_end_item}>
-            <HelpOutlineOutlinedIcon onClick={() => helpOpenHandler('paper')} />
+            <HelpOutlineOutlinedIcon onClick={() => router.push('/help')} />
           </div>
           <div title='Logout' className={styles.sidebar_end_item}>
             <LogoutOutlinedIcon onClick={logoutHandler} />

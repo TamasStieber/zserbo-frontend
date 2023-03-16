@@ -6,9 +6,9 @@ import {
   SelectChangeEvent,
   Backdrop,
   CircularProgress,
-} from "@mui/material";
-import { useRouter } from "next/router";
-import { useEffect, useState } from "react";
+} from '@mui/material';
+import { useRouter } from 'next/router';
+import { useEffect, useState } from 'react';
 import {
   BudgetElements,
   FetchMethods,
@@ -16,18 +16,19 @@ import {
   MonthDetailsProps,
   Months,
   Savings,
-} from "../types/types";
-import ExpensesTable from "./ExpensesTable";
-import IncomesTable from "./IncomesTable";
-import MonthSummary from "./MonthSummary";
-import SavingsTable from "./SavingsTable";
-import SpendingsTable from "./SpendingsTable";
-import UpdateDialog from "./UpdateDialog";
-import styles from "../styles/Home.module.css";
-import InfoOutlinedIcon from "@mui/icons-material/InfoOutlined";
-import { ToastContainer } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
-import { showSuccessToast } from "@/utils/utils";
+} from '../types/types';
+import ExpensesTable from './ExpensesTable';
+import IncomesTable from './IncomesTable';
+import MonthSummary from './MonthSummary';
+import SavingsTable from './SavingsTable';
+import SpendingsTable from './SpendingsTable';
+import UpdateDialog from './UpdateDialog';
+import styles from '../styles/Home.module.css';
+import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined';
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+import { formatDate, showErrorToast, showSuccessToast } from '@/utils/utils';
+import MonthDetailsContainer from './MonthDetailsContainer';
 
 const MonthDetails = ({ url }: MonthDetailsProps) => {
   const router = useRouter();
@@ -36,8 +37,8 @@ const MonthDetails = ({ url }: MonthDetailsProps) => {
   const [open, setOpen] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(false);
   const [propertiesOpen, setPropertiesOpen] = useState<boolean>(false);
-  const [buttonVariant, setButtonVariant] = useState<"outlined" | "contained">(
-    "outlined"
+  const [buttonVariant, setButtonVariant] = useState<'outlined' | 'contained'>(
+    'outlined'
   );
   const [currentMonth, setCurrentMonth] = useState<Month | null>(null);
   const [months, setMonths] = useState<Months>([]);
@@ -48,7 +49,7 @@ const MonthDetails = ({ url }: MonthDetailsProps) => {
 
   const isMonthClosed = currentMonth ? currentMonth.closed : false;
   const closeButtonText =
-    currentMonth && currentMonth.closed ? "Open Month" : "Close Month";
+    currentMonth && currentMonth.closed ? 'Open Month' : 'Close Month';
 
   const predecessor: Month | undefined = months.find(
     (month) => month._id === currentMonth?.predecessor[0]?.monthId
@@ -57,14 +58,14 @@ const MonthDetails = ({ url }: MonthDetailsProps) => {
   const initialUpdateValues = {
     balance: currentMonth?.balance || 0,
     opening: currentMonth?.opening || 0,
-    comment: currentMonth?.comment || "",
+    comment: currentMonth?.comment || '',
   };
 
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
 
   const getHeight = () => {
-    const measureHeight = document.getElementById("measure")?.clientHeight;
+    const measureHeight = document.getElementById('measure')?.clientHeight;
     if (measureHeight && height !== measureHeight) {
       setHeight(measureHeight);
     }
@@ -73,14 +74,14 @@ const MonthDetails = ({ url }: MonthDetailsProps) => {
   getHeight();
 
   const toggleProperties = () => {
-    const propertiesElement = document.getElementById("properties");
+    const propertiesElement = document.getElementById('properties');
     if (propertiesElement) {
       if (propertiesOpen) {
-        propertiesElement.style.height = "0";
-        setButtonVariant("outlined");
+        propertiesElement.style.height = '0';
+        setButtonVariant('outlined');
       } else {
-        propertiesElement.style.height = height + "px";
-        setButtonVariant("contained");
+        propertiesElement.style.height = height + 'px';
+        setButtonVariant('contained');
       }
       setPropertiesOpen(!propertiesOpen);
     }
@@ -94,7 +95,7 @@ const MonthDetails = ({ url }: MonthDetailsProps) => {
   const fetchSavings = async (token: string): Promise<void> => {
     try {
       const fetchResult = await fetch(`${process.env.BACKEND_URL}/savings`, {
-        method: "GET",
+        method: 'GET',
         headers: { Authorization: `Bearer ${token}` },
       });
       const data = await fetchResult.json();
@@ -108,7 +109,7 @@ const MonthDetails = ({ url }: MonthDetailsProps) => {
   const fetchAllMonths = async (token: string): Promise<void> => {
     try {
       const fetchResult = await fetch(`${process.env.BACKEND_URL}/months/`, {
-        method: "GET",
+        method: 'GET',
         headers: { Authorization: `Bearer ${token}` },
       });
 
@@ -127,11 +128,11 @@ const MonthDetails = ({ url }: MonthDetailsProps) => {
         const fetchResult = await fetch(
           `${process.env.BACKEND_URL}/months/${currentMonth?._id}/update/`,
           {
-            method: "put",
+            method: 'put',
             body: submitBody,
             headers: {
               Authorization: `Bearer ${token}`,
-              "Content-Type": "application/json",
+              'Content-Type': 'application/json',
             },
           }
         );
@@ -141,19 +142,21 @@ const MonthDetails = ({ url }: MonthDetailsProps) => {
         if (result.error) {
           console.error(result.error);
           setLoading(false);
+          showErrorToast();
         } else {
           if (currentMonth) {
+            setLoading(false);
             showSuccessToast({
               subject: currentMonth?.name,
               fetchMethod: FetchMethods.put,
             });
             setMonthDetailsUpdated(!monthDetailsUpdated);
-            setLoading(false);
           }
         }
       } catch (error) {
         console.error(error);
         setLoading(false);
+        showErrorToast();
       }
     };
 
@@ -165,7 +168,7 @@ const MonthDetails = ({ url }: MonthDetailsProps) => {
     fetchMethod: FetchMethods,
     id?: string
   ): Promise<void> => {
-    id = id ? id : "";
+    id = id ? id : '';
     const insertBudget = async (token: string): Promise<void> => {
       setLoading(true);
       try {
@@ -176,7 +179,7 @@ const MonthDetails = ({ url }: MonthDetailsProps) => {
             body: submitBody,
             headers: {
               Authorization: `Bearer ${token}`,
-              "Content-Type": "application/json",
+              'Content-Type': 'application/json',
             },
           }
         );
@@ -186,17 +189,19 @@ const MonthDetails = ({ url }: MonthDetailsProps) => {
         if (result.error) {
           console.error(result.error);
           setLoading(false);
+          showErrorToast();
         } else {
+          setLoading(false);
           showSuccessToast({
             subject: result.newBudgetElement.name,
             fetchMethod: fetchMethod,
           });
           setMonthDetailsUpdated(!monthDetailsUpdated);
-          setLoading(false);
         }
       } catch (error) {
         console.error(error);
         setLoading(false);
+        showErrorToast();
       }
     };
 
@@ -210,32 +215,43 @@ const MonthDetails = ({ url }: MonthDetailsProps) => {
     const fetchDelete = async (token: string): Promise<void> => {
       setLoading(true);
       try {
-        await fetch(
+        const fetchResult = await fetch(
           `${process.env.BACKEND_URL}/months/${currentMonth?._id}/${type}/${id}`,
           {
-            method: "delete",
+            method: 'delete',
             headers: {
               Authorization: `Bearer ${token}`,
-              "Content-Type": "application/json",
+              'Content-Type': 'application/json',
             },
           }
         );
 
-        const found =
-          type === BudgetElements.income
-            ? currentMonth?.income.find((income) => income._id === id)
-            : currentMonth?.budget.find((budget) => budget._id === id);
-        if (found) {
-          showSuccessToast({
-            subject: found.name,
-            fetchMethod: FetchMethods.delete,
-          });
-          setMonthDetailsUpdated(!monthDetailsUpdated);
+        const result = await fetchResult.json();
+
+        if (result.error) {
+          console.error(result.error);
+          setLoading(false);
+          showErrorToast();
+        } else {
+          const found =
+            type === BudgetElements.income
+              ? currentMonth?.income.find((income) => income._id === id)
+              : currentMonth?.budget.find((budget) => budget._id === id);
+          if (found) {
+            showSuccessToast({
+              subject: found.name,
+              fetchMethod: FetchMethods.delete,
+            });
+            setMonthDetailsUpdated(!monthDetailsUpdated);
+          } else {
+            showErrorToast();
+          }
           setLoading(false);
         }
       } catch (error) {
         console.error(error);
         setLoading(false);
+        showErrorToast();
       }
     };
 
@@ -248,7 +264,7 @@ const MonthDetails = ({ url }: MonthDetailsProps) => {
     savingId?: string,
     id?: string
   ): Promise<void> => {
-    id = id ? id : "";
+    id = id ? id : '';
     const insertSaving = async (token: string): Promise<void> => {
       setLoading(true);
       try {
@@ -259,7 +275,7 @@ const MonthDetails = ({ url }: MonthDetailsProps) => {
             body: submitBody,
             headers: {
               Authorization: `Bearer ${token}`,
-              "Content-Type": "application/json",
+              'Content-Type': 'application/json',
             },
           }
         );
@@ -269,17 +285,19 @@ const MonthDetails = ({ url }: MonthDetailsProps) => {
         if (result.error) {
           console.error(result.error);
           setLoading(false);
+          showErrorToast();
         } else {
+          setLoading(false);
           showSuccessToast({
             subject: `Contribution to ${result.contributor.name}`,
             fetchMethod: fetchMethod,
           });
           setMonthDetailsUpdated(!monthDetailsUpdated);
-          setLoading(false);
         }
       } catch (error) {
         console.error(error);
         setLoading(false);
+        showErrorToast();
       }
     };
 
@@ -296,10 +314,10 @@ const MonthDetails = ({ url }: MonthDetailsProps) => {
         const fetchResult = await fetch(
           `${process.env.BACKEND_URL}/savings/${savingId}/contributors/${id}`,
           {
-            method: "delete",
+            method: 'delete',
             headers: {
               Authorization: `Bearer ${token}`,
-              "Content-Type": "application/json",
+              'Content-Type': 'application/json',
             },
           }
         );
@@ -309,17 +327,19 @@ const MonthDetails = ({ url }: MonthDetailsProps) => {
         if (result.error) {
           console.error(result.error);
           setLoading(false);
+          showErrorToast();
         } else {
+          setLoading(false);
           showSuccessToast({
             subject: `Contribution to ${result.contributorToDelete.name}`,
             fetchMethod: FetchMethods.delete,
           });
           setMonthDetailsUpdated(!monthDetailsUpdated);
-          setLoading(false);
         }
       } catch (error) {
         console.error(error);
         setLoading(false);
+        showErrorToast();
       }
     };
 
@@ -332,7 +352,7 @@ const MonthDetails = ({ url }: MonthDetailsProps) => {
     savingId?: string,
     id?: string
   ): Promise<void> => {
-    id = id ? id : "";
+    id = id ? id : '';
     const insertSpending = async (token: string): Promise<void> => {
       setLoading(true);
       try {
@@ -343,7 +363,7 @@ const MonthDetails = ({ url }: MonthDetailsProps) => {
             body: submitBody,
             headers: {
               Authorization: `Bearer ${token}`,
-              "Content-Type": "application/json",
+              'Content-Type': 'application/json',
             },
           }
         );
@@ -353,17 +373,19 @@ const MonthDetails = ({ url }: MonthDetailsProps) => {
         if (result.error) {
           console.error(result.error);
           setLoading(false);
+          showErrorToast();
         } else {
+          setLoading(false);
           showSuccessToast({
             subject: `Spending from ${result.spending.name}`,
             fetchMethod: fetchMethod,
           });
           setMonthDetailsUpdated(!monthDetailsUpdated);
-          setLoading(false);
         }
       } catch (error) {
         console.error(error);
         setLoading(false);
+        showErrorToast();
       }
     };
 
@@ -380,10 +402,10 @@ const MonthDetails = ({ url }: MonthDetailsProps) => {
         const fetchResult = await fetch(
           `${process.env.BACKEND_URL}/savings/${savingId}/spendings/${id}`,
           {
-            method: "delete",
+            method: 'delete',
             headers: {
               Authorization: `Bearer ${token}`,
-              "Content-Type": "application/json",
+              'Content-Type': 'application/json',
             },
           }
         );
@@ -393,17 +415,19 @@ const MonthDetails = ({ url }: MonthDetailsProps) => {
         if (result.error) {
           console.error(result.error);
           setLoading(false);
+          showErrorToast();
         } else {
+          setLoading(false);
           showSuccessToast({
             subject: `Spending from ${result.spendingToDelete.name}`,
             fetchMethod: FetchMethods.delete,
           });
           setMonthDetailsUpdated(!monthDetailsUpdated);
-          setLoading(false);
         }
       } catch (error) {
         console.error(error);
         setLoading(false);
+        showErrorToast();
       }
     };
 
@@ -427,15 +451,16 @@ const MonthDetails = ({ url }: MonthDetailsProps) => {
       sumAllSavings: sumAllSavings,
     };
     const updateMonthClose = async (token: string): Promise<void> => {
+      setLoading(true);
       try {
         const fetchResult = await fetch(
           `${process.env.BACKEND_URL}/months/${currentMonth?._id}/toggleclose/`,
           {
-            method: "put",
+            method: 'put',
             body: JSON.stringify(submitBody),
             headers: {
               Authorization: `Bearer ${token}`,
-              "Content-Type": "application/json",
+              'Content-Type': 'application/json',
             },
           }
         );
@@ -444,19 +469,24 @@ const MonthDetails = ({ url }: MonthDetailsProps) => {
 
         if (result.error) {
           console.error(result.error);
+          setLoading(false);
+          showErrorToast();
         } else {
           if (currentMonth) {
+            setLoading(false);
             showSuccessToast({
               subject: currentMonth?.name,
               customMessage: isMonthClosed
-                ? "has been opened"
-                : "has been closed",
+                ? 'has been opened'
+                : 'has been closed',
             });
             setMonthDetailsUpdated(!monthDetailsUpdated);
           }
         }
       } catch (error) {
         console.error(error);
+        setLoading(false);
+        showErrorToast();
       }
     };
 
@@ -464,7 +494,7 @@ const MonthDetails = ({ url }: MonthDetailsProps) => {
   };
 
   useEffect(() => {
-    const storedJwtToken = localStorage.getItem("jwtToken");
+    const storedJwtToken = localStorage.getItem('jwtToken');
     if (storedJwtToken !== null) setJwtToken(storedJwtToken);
   }, []);
 
@@ -486,7 +516,7 @@ const MonthDetails = ({ url }: MonthDetailsProps) => {
         const fetchResult = await fetch(
           `${process.env.BACKEND_URL}/months/${url}`,
           {
-            method: "GET",
+            method: 'GET',
             headers: { Authorization: `Bearer ${token}` },
           }
         );
@@ -503,14 +533,14 @@ const MonthDetails = ({ url }: MonthDetailsProps) => {
   }, [jwtToken, url, monthDetailsUpdated]);
 
   useEffect(() => {
-    const measureHeight = document.getElementById("measure")?.clientHeight;
+    const measureHeight = document.getElementById('measure')?.clientHeight;
     if (measureHeight && height !== measureHeight) {
       setHeight(measureHeight);
     }
 
-    const propertiesElement = document.getElementById("properties");
+    const propertiesElement = document.getElementById('properties');
     if (propertiesElement && propertiesOpen) {
-      propertiesElement.style.height = height + "px";
+      propertiesElement.style.height = height + 'px';
     }
   }, [height, propertiesOpen, months]);
 
@@ -532,8 +562,8 @@ const MonthDetails = ({ url }: MonthDetailsProps) => {
           <FormControl fullWidth>
             {/* <InputLabel id='month-selector-label'>Month</InputLabel> */}
             <Select
-              labelId="month-selector-label"
-              id="month-selector"
+              labelId='month-selector-label'
+              id='month-selector'
               defaultValue={currentMonth.url}
               // label='Month'
               onChange={changeMonth}
@@ -549,16 +579,17 @@ const MonthDetails = ({ url }: MonthDetailsProps) => {
             <div className={styles.button_row_left}>
               <Button
                 sx={{ marginRight: 2 }}
-                variant="contained"
+                variant='contained'
+                disabled={isMonthClosed}
                 onClick={handleOpen}
               >
                 Quick Update
               </Button>
               <Button
                 sx={{ marginRight: 2 }}
-                variant="contained"
+                variant='contained'
                 onClick={toggleMonthClose}
-                color="warning"
+                color='warning'
               >
                 {closeButtonText}
               </Button>
@@ -568,24 +599,44 @@ const MonthDetails = ({ url }: MonthDetailsProps) => {
                 variant={buttonVariant}
                 onClick={toggleProperties}
                 startIcon={<InfoOutlinedIcon />}
-                color="success"
+                color='success'
               >
-                Properties
+                Info
               </Button>
             </div>
           </div>
-          <div id="properties" className={styles.month_properties}>
-            <div id="measure">
+          <div id='properties' className={styles.month_properties}>
+            <div id='measure'>
               <div className={styles.month_properties_text}>
-                Month is {currentMonth.closed ? "closed" : "open"}
+                <strong>
+                  Month is {currentMonth.closed ? 'closed' : 'open'}
+                </strong>
                 <br />
-                Predecessor:{" "}
+                <strong>Predecessor:</strong>{' '}
                 {predecessor ? (
                   <a href={`/monthly-budget/${predecessor?.url}`}>
                     {predecessor?.name}
                   </a>
                 ) : (
                   <>No predecessor (first month)</>
+                )}
+                <br />
+                {currentMonth.date ? (
+                  <>
+                    <strong>Last modified:</strong>{' '}
+                    {formatDate(currentMonth.date)}
+                  </>
+                ) : (
+                  <></>
+                )}
+                <br />
+                {currentMonth.closed && currentMonth.closedAt ? (
+                  <>
+                    <strong>Closed at:</strong>{' '}
+                    {formatDate(currentMonth.closedAt)}
+                  </>
+                ) : (
+                  <></>
                 )}
               </div>
               <div className={styles.month_properties_comment}>
@@ -599,7 +650,8 @@ const MonthDetails = ({ url }: MonthDetailsProps) => {
             predecessor={predecessor}
             savings={savings}
           />
-          <div className={styles.column_container}>
+          {/* <div className={styles.column_container}> */}
+          <MonthDetailsContainer open={isMonthClosed}>
             <div className={styles.column}>
               <IncomesTable
                 incomes={currentMonth.income}
@@ -632,10 +684,11 @@ const MonthDetails = ({ url }: MonthDetailsProps) => {
               submitHandler={handleUpdateSubmit}
               initialValues={initialUpdateValues}
             />
-          </div>
+          </MonthDetailsContainer>
+          {/* </div> */}
           <ToastContainer />
-          <Backdrop sx={{ color: "#fff", zIndex: 1000 }} open={loading}>
-            <CircularProgress color="success" />
+          <Backdrop sx={{ color: '#fff', zIndex: 1000 }} open={loading}>
+            <CircularProgress />
           </Backdrop>
         </>
       ) : (

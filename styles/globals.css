@@ -12,6 +12,11 @@
   --green-3: #398f1f;
   --red-0: #b30000;
   --purple-0: #f8f7ff;
+  --gradient-0: #bb28cd;
+  --gradient-1: #735bcc;
+  --gradient-2: #2db0ca;
+  --gradient-3: #11879ed0;
+  --gradient-4: #633ad3d0;
 }
 
 html,
@@ -21,10 +26,6 @@ body {
   /* font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Oxygen, */
   /* Ubuntu, Cantarell, Fira Sans, Droid Sans, Helvetica Neue, sans-serif; */
   font-family: 'Montserrat', sans-serif;
-}
-
-::selection {
-  background-color: #59dd30;
 }
 
 a {

@@ -11,6 +11,7 @@ import { DialogProps } from '@mui/material';
 import * as _ from 'lodash';
 import Help from '../Help';
 import Sidebar from './Sidebar';
+import Image from 'next/image';
 
 export default function Navbar() {
   const router = useRouter();
@@ -47,7 +48,14 @@ export default function Navbar() {
     <>
       <div className={styles.navbar}>
         <div className={styles.title} onClick={() => router.push('/')}>
-          <PetsIcon />
+          {/* <PetsIcon /> */}
+          <Image
+            src='/img/logo_white.png'
+            alt='logo'
+            width='30'
+            height='30'
+            style={{ marginRight: 10 }}
+          />
           <h1>Zserbó</h1>
         </div>
         {/* <hr /> */}
@@ -77,15 +85,23 @@ export default function Navbar() {
           >
             <MenuIcon onClick={handleSidebarOpen} />
           </div>
-          <div title='Help' className={styles.navbar_end_item}>
-            <HelpOutlineOutlinedIcon onClick={handleHelpOpen('paper')} />
+          <div
+            title='Help'
+            className={
+              pathname === '/help'
+                ? styles.navbar_end_item_active
+                : styles.navbar_end_item
+            }
+          >
+            {/* <HelpOutlineOutlinedIcon onClick={handleHelpOpen('paper')} /> */}
+            <HelpOutlineOutlinedIcon onClick={() => router.push('/help')} />
           </div>
           <div title='Logout' className={styles.navbar_end_item}>
             <LogoutOutlinedIcon onClick={handleLogout} />
           </div>
         </div>
       </div>
-      <Help open={open} closeHandler={handleClose} scroll={scroll} />
+      {/* <Help open={open} closeHandler={handleClose} scroll={scroll} /> */}
       <Sidebar
         open={sidebarOpen}
         closeHandler={handleSidebarClose}
