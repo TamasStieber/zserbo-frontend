@@ -34,6 +34,7 @@ import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { NoSavingsFound } from '@/components/NoElementFound';
 import { GradientButton } from '@/components/CustomMUIElements';
+import SavingsSkeleton from '@/components/skeletons/SavingsSkeleton';
 
 const Savings: NextPage = () => {
   const router = useRouter();
@@ -326,14 +327,15 @@ const Savings: NextPage = () => {
           </Backdrop>
         </>
       ) : (
-        <>
-          <Skeleton
-            animation='wave'
-            variant='rounded'
-            height={500}
-            sx={{ marginBottom: '10px', borderRadius: '10px' }}
-          />
-        </>
+        // <>
+        //   <Skeleton
+        //     animation='wave'
+        //     variant='rounded'
+        //     height={500}
+        //     sx={{ marginBottom: '10px', borderRadius: '10px' }}
+        //   />
+        // </>
+        <SavingsSkeleton />
       )}
     </PageContainer>
   );

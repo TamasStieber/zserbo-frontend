@@ -13,3 +13,10 @@ export const GradientButton = styled(Button)({
     backgroundImage: 'linear-gradient(100deg, #cb38dd, #836bdc)',
   },
 });
+
+export const PurpleButton = styled(Button)({
+  backgroundColor: '#bb28cd',
+  '&:hover': {
+    backgroundColor: '#cb38dd',
+  },
+});

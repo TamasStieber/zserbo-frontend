@@ -10,6 +10,7 @@ import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { showErrorToast, showSuccessToast } from '@/utils/utils';
 import { Backdrop, CircularProgress, Skeleton } from '@mui/material';
+import DefaultsSkeleton from '@/components/skeletons/DefaultsSkeleton';
 
 const Defaults: NextPage = () => {
   const router = useRouter();
@@ -174,14 +175,7 @@ const Defaults: NextPage = () => {
           </Backdrop>
         </>
       ) : (
-        <>
-          <Skeleton
-            animation='wave'
-            variant='rounded'
-            height={500}
-            sx={{ marginBottom: '10px', borderRadius: '10px' }}
-          />
-        </>
+        <DefaultsSkeleton />
       )}
     </PageContainer>
   );

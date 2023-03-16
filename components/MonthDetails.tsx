@@ -29,6 +29,8 @@ import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { formatDate, showErrorToast, showSuccessToast } from '@/utils/utils';
 import MonthDetailsContainer from './MonthDetailsContainer';
+import { PurpleButton } from './CustomMUIElements';
+import MonthPageSkeleton from './skeletons/MonthPageSkeleton';
 
 const MonthDetails = ({ url }: MonthDetailsProps) => {
   const router = useRouter();
@@ -43,6 +45,7 @@ const MonthDetails = ({ url }: MonthDetailsProps) => {
   const [currentMonth, setCurrentMonth] = useState<Month | null>(null);
   const [months, setMonths] = useState<Months>([]);
   const [savings, setSavings] = useState<Savings>([]);
+  const [savingsReady, setSavingsReady] = useState(false);
   const [monthDetailsUpdated, setMonthDetailsUpdated] =
     useState<boolean>(false);
   const [height, setHeight] = useState<number>(0);
@@ -88,8 +91,8 @@ const MonthDetails = ({ url }: MonthDetailsProps) => {
   };
 
   const changeMonth = (event: SelectChangeEvent) => {
+    setLoading(true);
     router.push(`/monthly-budget/${(event.target as HTMLSelectElement).value}`);
-    // window.location.href = `/monthly-budget/${event.target.value}`;
   };
 
   const fetchSavings = async (token: string): Promise<void> => {
@@ -100,9 +103,16 @@ const MonthDetails = ({ url }: MonthDetailsProps) => {
       });
       const data = await fetchResult.json();
 
-      setSavings(data.allSavings);
+      if (data.error) {
+        console.error(data.error);
+        showErrorToast();
+      } else {
+        setSavings(data.allSavings);
+        setSavingsReady(true);
+      }
     } catch (error) {
       console.error(error);
+      showErrorToast();
     }
   };
 
@@ -115,9 +125,15 @@ const MonthDetails = ({ url }: MonthDetailsProps) => {
 
       const data = await fetchResult.json();
 
-      setMonths(data.allMonths);
+      if (data.error) {
+        console.error(data.error);
+        showErrorToast();
+      } else {
+        setMonths(data.allMonths);
+      }
     } catch (error) {
       console.error(error);
+      showErrorToast();
     }
   };
 
@@ -523,13 +539,20 @@ const MonthDetails = ({ url }: MonthDetailsProps) => {
 
         const data = await fetchResult.json();
 
-        setCurrentMonth(data.month);
+        if (data.error) {
+          console.error(data.error);
+          showErrorToast();
+        } else {
+          setCurrentMonth(data.month);
+        }
       } catch (error) {
         console.error(error);
+        showErrorToast();
       }
     };
 
     fetchCurrentMonth(jwtToken);
+    setLoading(false);
   }, [jwtToken, url, monthDetailsUpdated]);
 
   useEffect(() => {
@@ -546,26 +569,12 @@ const MonthDetails = ({ url }: MonthDetailsProps) => {
 
   return (
     <>
-      {/* <select name='month-selector' id='months-selector' onChange={changeMonth}>
-        {months.map((month) => (
-          <option
-            key={month._id}
-            value={month.url}
-            selected={month.url === currentMonth?.url ? true : false}
-          >
-            {month.name}
-          </option>
-        ))}
-      </select> */}
-      {currentMonth && months.length > 0 ? (
+      {currentMonth && months.length > 0 && savingsReady ? (
         <>
           <FormControl fullWidth>
-            {/* <InputLabel id='month-selector-label'>Month</InputLabel> */}
             <Select
-              labelId='month-selector-label'
               id='month-selector'
               defaultValue={currentMonth.url}
-              // label='Month'
               onChange={changeMonth}
             >
               {months.map((month) => (
@@ -585,14 +594,14 @@ const MonthDetails = ({ url }: MonthDetailsProps) => {
               >
                 Quick Update
               </Button>
-              <Button
+              <PurpleButton
                 sx={{ marginRight: 2 }}
                 variant='contained'
                 onClick={toggleMonthClose}
                 color='warning'
               >
                 {closeButtonText}
-              </Button>
+              </PurpleButton>
             </div>
             <div className={styles.button_row_right}>
               <Button
@@ -692,7 +701,7 @@ const MonthDetails = ({ url }: MonthDetailsProps) => {
           </Backdrop>
         </>
       ) : (
-        <></>
+        <MonthPageSkeleton />
       )}
     </>
   );

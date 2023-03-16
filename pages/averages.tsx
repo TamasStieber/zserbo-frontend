@@ -11,6 +11,7 @@ import { categories } from '@/components/Categories';
 import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import { NoMonthsFound } from '@/components/NoElementFound';
+import AveragesSkeleton from '@/components/skeletons/AveragesSkeleton';
 
 const Averages: NextPage = () => {
   const router = useRouter();
@@ -116,112 +117,115 @@ const Averages: NextPage = () => {
 
   return (
     <PageContainer title='Averages'>
-      {ready ? (
-        <>
-          {months && months.length > 0 ? (
-            <div className={styles.averages_container}>
-              <div className={styles.averages_head}>
-                <div className={styles.averages_title}>
-                  Averages of actual expenses across all months
-                </div>
-                <div className={styles.averages_sort}>
-                  Order by:
-                  <ButtonGroup sx={{ marginLeft: 2 }}>
-                    <Button
-                      variant={orderByNameButtonVariant}
-                      onClick={() => setOrderBy('name')}
-                    >
-                      Name
-                    </Button>
-                    <Button
-                      variant={orderByValueButtonVariant}
-                      onClick={() => setOrderBy('value')}
-                    >
-                      Value
-                    </Button>
-                  </ButtonGroup>
-                  <ButtonGroup sx={{ marginLeft: 2 }}>
-                    <Button
-                      variant={upButtonVariant}
-                      onClick={() => setOrderDirection('up')}
-                    >
-                      <KeyboardArrowUpIcon />
-                    </Button>
-                    <Button
-                      variant={downButtonVariant}
-                      onClick={() => setOrderDirection('down')}
-                    >
-                      <KeyboardArrowDownIcon />
-                    </Button>
-                  </ButtonGroup>
-                </div>
-                <div className={styles.averages_search}>
-                  <TextField
-                    label='Search'
-                    size='small'
-                    onChange={(event) => filterAverages(event)}
-                  />
-                </div>
-              </div>
-              <div className={styles.averages_body}>
-                {filteredAverages.length > 0 ? (
-                  <>
-                    {filteredAverages.map((average) => {
-                      const Icon = categories[average.categoryId].icon;
-                      return (
-                        <div
-                          key={average.name}
-                          className={styles.average}
-                          style={{
-                            backgroundColor: `rgba(${
-                              categories[average.categoryId].chartColor
-                            }, 0.1)`,
-                          }}
-                        >
+      <div className={styles.averages_container}>
+        <div className={styles.averages_head}>
+          <div className={styles.averages_title}>
+            Averages of actual expenses across all months
+          </div>
+          <div className={styles.averages_sort}>
+            Order by:
+            <ButtonGroup sx={{ marginLeft: 2 }}>
+              <Button
+                variant={orderByNameButtonVariant}
+                onClick={() => setOrderBy('name')}
+              >
+                Name
+              </Button>
+              <Button
+                variant={orderByValueButtonVariant}
+                onClick={() => setOrderBy('value')}
+              >
+                Value
+              </Button>
+            </ButtonGroup>
+            <ButtonGroup sx={{ marginLeft: 2 }}>
+              <Button
+                variant={upButtonVariant}
+                onClick={() => setOrderDirection('up')}
+              >
+                <KeyboardArrowUpIcon />
+              </Button>
+              <Button
+                variant={downButtonVariant}
+                onClick={() => setOrderDirection('down')}
+              >
+                <KeyboardArrowDownIcon />
+              </Button>
+            </ButtonGroup>
+          </div>
+          <div className={styles.averages_search}>
+            <TextField
+              error={
+                months &&
+                months.length > 0 &&
+                filter &&
+                filteredAverages.length === 0
+                  ? true
+                  : false
+              }
+              label='Search'
+              size='small'
+              onChange={(event) => filterAverages(event)}
+            />
+          </div>
+        </div>
+        <div className={styles.averages_body}>
+          {ready ? (
+            <>
+              {months && months.length > 0 ? (
+                <>
+                  {filteredAverages.length > 0 ? (
+                    <>
+                      {filteredAverages.map((average) => {
+                        const Icon = categories[average.categoryId].icon;
+                        return (
                           <div
-                            title={categories[average.categoryId].name}
-                            className={styles.average_icon}
+                            key={average.name}
+                            className={styles.average}
                             style={{
-                              backgroundColor:
-                                categories[average.categoryId].color,
+                              backgroundColor: `rgba(${
+                                categories[average.categoryId].chartColor
+                              }, 0.1)`,
                             }}
                           >
-                            <Icon />
-                          </div>
-                          <div className={styles.average_body}>
-                            <div className={styles.average_primary}>
-                              {addThousandSeparators(
-                                Math.round(average.amount / average.count),
-                                'Ft'
-                              )}
+                            <div
+                              title={categories[average.categoryId].name}
+                              className={styles.average_icon}
+                              style={{
+                                backgroundColor:
+                                  categories[average.categoryId].color,
+                              }}
+                            >
+                              <Icon />
                             </div>
-                            <div className={styles.average_secondary}>
-                              {average.name}
+                            <div className={styles.average_body}>
+                              <div className={styles.average_primary}>
+                                {addThousandSeparators(
+                                  Math.round(average.amount / average.count),
+                                  'Ft'
+                                )}
+                              </div>
+                              <div className={styles.average_secondary}>
+                                {average.name}
+                              </div>
                             </div>
                           </div>
-                        </div>
-                      );
-                    })}
-                  </>
-                ) : (
-                  <>No expenses found</>
-                )}
-              </div>
-            </div>
+                        );
+                      })}
+                    </>
+                  ) : (
+                    <>No expenses found</>
+                  )}
+                </>
+              ) : (
+                <NoMonthsFound link={true} />
+              )}
+            </>
           ) : (
-            <NoMonthsFound link={true} />
+            <AveragesSkeleton />
           )}
-        </>
-      ) : (
-        <>
-          <Skeleton
-            animation='wave'
-            variant='rounded'
-            height={500}
-            sx={{ marginBottom: '10px', borderRadius: '10px' }}
-          />
-        </>
-      )}
+        </div>
+      </div>
     </PageContainer>
   );
 };

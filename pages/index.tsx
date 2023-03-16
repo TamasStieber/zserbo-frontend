@@ -23,6 +23,7 @@ import { Months, Savings } from '@/types/types';
 import DashboardAverage from '@/components/DashboardAverage';
 import { NoMonthsFound } from '@/components/NoElementFound';
 import { Skeleton } from '@mui/material';
+import SummarySkeleton from '@/components/skeletons/SummarySkeleton';
 
 ChartJS.register(
   CategoryScale,
@@ -309,7 +310,7 @@ const Home: NextPage = () => {
   }, [jwtToken]);
 
   return (
-    <PageContainer title='Dashboard'>
+    <PageContainer title='Summary'>
       {monthsReady && savingsReady ? (
         <>
           {months && months.length > 0 ? (
@@ -357,14 +358,7 @@ const Home: NextPage = () => {
           )}
         </>
       ) : (
-        <>
-          <Skeleton
-            animation='wave'
-            variant='rounded'
-            height={500}
-            sx={{ marginBottom: '10px', borderRadius: '10px' }}
-          />
-        </>
+        <SummarySkeleton />
       )}
     </PageContainer>
   );
