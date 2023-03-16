@@ -78,8 +78,8 @@ export const showWarningToast = (message: string) => {
         });
 }
 
-export const showErrorToast = () => {
-    toast.error('Oops! An error occurred', {
+export const showErrorToast = (message?: string) => {
+    toast.error(message ? message : 'Oops! An error occurred', {
         position: "bottom-left",
         autoClose: 3000,
         hideProgressBar: false,
