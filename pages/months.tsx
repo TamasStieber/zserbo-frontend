@@ -29,6 +29,7 @@ import WarningOutlinedIcon from '@mui/icons-material/WarningOutlined';
 import {
   addThousandSeparators,
   formatDate,
+  showErrorToast,
   showSuccessToast,
 } from '../utils/utils';
 import { ToastContainer } from 'react-toastify';
@@ -102,23 +103,36 @@ const Months: NextPage = () => {
     const fetchUpdate = async (token: string): Promise<void> => {
       setLoading(true);
       try {
-        await fetch(`${process.env.BACKEND_URL}/months/update-default/${id}`, {
-          method: 'post',
-          headers: {
-            Authorization: `Bearer ${token}`,
-            'Content-Type': 'application/json',
-          },
-        });
+        const fetchResult = await fetch(
+          `${process.env.BACKEND_URL}/months/update-default/${id}`,
+          {
+            method: 'post',
+            headers: {
+              Authorization: `Bearer ${token}`,
+              'Content-Type': 'application/json',
+            },
+          }
+        );
 
-        const found = months.find((month) => month._id === id);
-        if (found) {
-          showSuccessToast({
-            subject: found.name,
-            customMessage: 'has been set to default',
-          });
+        const data = await fetchResult.json();
+
+        if (data.error) {
+          console.error(data.error);
+          setLoading(false);
+          showErrorToast();
+        } else {
+          const found = months.find((month) => month._id === data.id);
+          if (found) {
+            showSuccessToast({
+              subject: found.name,
+              customMessage: 'has been set to default',
+            });
+            setMonthListUpdated(!monthListUpdated);
+          } else {
+            showErrorToast();
+          }
           setLoading(false);
         }
-        setMonthListUpdated(!monthListUpdated);
       } catch (error) {
         console.error(error);
         setLoading(false);
@@ -132,22 +146,30 @@ const Months: NextPage = () => {
     const fetchDelete = async (token: string): Promise<void> => {
       setLoading(true);
       try {
-        await fetch(`${process.env.BACKEND_URL}/months/${id}`, {
-          method: 'delete',
-          headers: {
-            Authorization: `Bearer ${token}`,
-            'Content-Type': 'application/json',
-          },
-        });
+        const fetchResult = await fetch(
+          `${process.env.BACKEND_URL}/months/${id}`,
+          {
+            method: 'delete',
+            headers: {
+              Authorization: `Bearer ${token}`,
+              'Content-Type': 'application/json',
+            },
+          }
+        );
 
-        const found = months.find((month) => month._id === id);
-        if (found) {
+        const data = await fetchResult.json();
+
+        if (data.error) {
+          console.error(data.error);
+          setLoading(false);
+          showErrorToast();
+        } else {
+          setLoading(false);
           showSuccessToast({
-            subject: found.name,
+            subject: data.monthToDelete.name,
             fetchMethod: FetchMethods.delete,
           });
           setMonthListUpdated(!monthListUpdated);
-          setLoading(false);
         }
       } catch (error) {
         console.error(error);
@@ -184,17 +206,19 @@ const Months: NextPage = () => {
         if (data.error) {
           console.error(data.error);
           setLoading(false);
+          showErrorToast();
         } else {
+          setLoading(false);
           showSuccessToast({
             subject: data.month.name,
             fetchMethod: fetchMethod,
           });
           setMonthListUpdated(!monthListUpdated);
-          setLoading(false);
         }
       } catch (error) {
         console.error(error);
         setLoading(false);
+        showErrorToast();
       }
     };
 

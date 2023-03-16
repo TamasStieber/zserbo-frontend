@@ -285,7 +285,7 @@ export type Category = {
 
 export type MonthSummaryProps = {
   currentMonth: Month;
-  predecessor: Month | undefined
+  predecessor: Month | undefined;
   savings: Savings;
 }
 

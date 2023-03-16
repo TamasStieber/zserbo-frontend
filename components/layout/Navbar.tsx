@@ -11,6 +11,7 @@ import { DialogProps } from '@mui/material';
 import * as _ from 'lodash';
 import Help from '../Help';
 import Sidebar from './Sidebar';
+import Image from 'next/image';
 
 export default function Navbar() {
   const router = useRouter();
@@ -47,7 +48,14 @@ export default function Navbar() {
     <>
       <div className={styles.navbar}>
         <div className={styles.title} onClick={() => router.push('/')}>
-          <PetsIcon />
+          {/* <PetsIcon /> */}
+          <Image
+            src='/img/logo_white.png'
+            alt='logo'
+            width='30'
+            height='30'
+            style={{ marginRight: 10 }}
+          />
           <h1>Zserbó</h1>
         </div>
         {/* <hr /> */}

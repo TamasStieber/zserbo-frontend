@@ -15,6 +15,8 @@ import { VisibilityOff, Visibility } from '@mui/icons-material';
 import Head from 'next/head';
 import PetsIcon from '@mui/icons-material/Pets';
 import styles from '../../styles/Home.module.css';
+import Image from 'next/image';
+import { WhiteBackgroundTextField } from '@/components/CustomMUIElements';
 
 type TokenResponseType = { token: string };
 
@@ -78,8 +80,9 @@ const LoginForm = () => {
       {/* <Box maxWidth='sm' margin='auto'> */}
       <div className={styles.login}>
         <div className={styles.login_title}>
-          <PetsIcon />
-          <p>Zserbó</p>
+          {/* <PetsIcon />
+          <p>Zserbó</p> */}
+          <Image src='/img/logo.png' alt='logo' width='80' height='80' />
         </div>
         {/* <Typography sx={{ textAlign: 'center' }} variant='h5'>
           Sign In
@@ -94,7 +97,7 @@ const LoginForm = () => {
           component='form'
           onSubmit={formik.handleSubmit}
         >
-          <TextField
+          <WhiteBackgroundTextField
             sx={{ marginTop: 2, width: '100%' }}
             variant='outlined'
             id='username'
@@ -105,7 +108,7 @@ const LoginForm = () => {
             error={formik.touched.username && Boolean(formik.errors.username)}
             helperText={formik.touched.username && formik.errors.username}
           />
-          <TextField
+          <WhiteBackgroundTextField
             sx={{ marginTop: 2, width: '100%' }}
             variant='outlined'
             id='password'

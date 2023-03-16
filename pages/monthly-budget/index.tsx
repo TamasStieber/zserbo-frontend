@@ -1,9 +1,9 @@
-import { useEffect, useState } from "react";
-import { useRouter } from "next/router";
-import { Months } from "../../types/types";
-import PageContainer from "@/components/layout/PageContainer";
-import { NoMonthsFound } from "@/components/NoElementFound";
-import { Skeleton, Typography } from "@mui/material";
+import { useEffect, useState } from 'react';
+import { useRouter } from 'next/router';
+import { Months } from '../../types/types';
+import PageContainer from '@/components/layout/PageContainer';
+import { NoMonthsFound } from '@/components/NoElementFound';
+import { Skeleton, Typography } from '@mui/material';
 
 const MonthlyBudget = () => {
   const router = useRouter();
@@ -15,7 +15,7 @@ const MonthlyBudget = () => {
   const fetchMonths = async (token: string): Promise<void> => {
     try {
       const fetchResult = await fetch(`${process.env.BACKEND_URL}/months`, {
-        method: "GET",
+        method: 'GET',
         headers: { Authorization: `Bearer ${token}` },
       });
       const data = await fetchResult.json();
@@ -28,7 +28,7 @@ const MonthlyBudget = () => {
   };
 
   useEffect(() => {
-    const storedJwtToken = localStorage.getItem("jwtToken");
+    const storedJwtToken = localStorage.getItem('jwtToken');
     if (storedJwtToken !== null) setJwtToken(storedJwtToken);
   }, []);
 
@@ -52,28 +52,35 @@ const MonthlyBudget = () => {
   return (
     <PageContainer
       title={
-        ready ? (
-          "Monthly Budget"
+        ready && months && months.length === 0 ? (
+          'Monthly Budget'
         ) : (
-          <Typography variant="h1">
-            <Skeleton animation="wave" width={150} sx={{ margin: "auto" }} />
+          <Typography variant='h1'>
+            <Skeleton animation='wave' width={150} sx={{ margin: 'auto' }} />
           </Typography>
         )
       }
     >
       {ready ? (
         <>
-          {months && months.length > 0 ? <></> : <NoMonthsFound link={true} />}
+          {months && months.length > 0 ? (
+            <Skeleton
+              animation='wave'
+              variant='rounded'
+              height={500}
+              sx={{ marginBottom: '10px', borderRadius: '10px' }}
+            />
+          ) : (
+            <NoMonthsFound link={true} />
+          )}
         </>
       ) : (
-        <>
-          <Skeleton
-            animation="wave"
-            variant="rounded"
-            height={500}
-            sx={{ marginBottom: "10px", borderRadius: "10px" }}
-          />
-        </>
+        <Skeleton
+          animation='wave'
+          variant='rounded'
+          height={500}
+          sx={{ marginBottom: '10px', borderRadius: '10px' }}
+        />
       )}
     </PageContainer>
   );

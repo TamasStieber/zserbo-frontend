@@ -28,6 +28,7 @@ import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { formatDate, showErrorToast, showSuccessToast } from '@/utils/utils';
+import MonthDetailsContainer from './MonthDetailsContainer';
 
 const MonthDetails = ({ url }: MonthDetailsProps) => {
   const router = useRouter();
@@ -141,19 +142,21 @@ const MonthDetails = ({ url }: MonthDetailsProps) => {
         if (result.error) {
           console.error(result.error);
           setLoading(false);
+          showErrorToast();
         } else {
           if (currentMonth) {
+            setLoading(false);
             showSuccessToast({
               subject: currentMonth?.name,
               fetchMethod: FetchMethods.put,
             });
             setMonthDetailsUpdated(!monthDetailsUpdated);
-            setLoading(false);
           }
         }
       } catch (error) {
         console.error(error);
         setLoading(false);
+        showErrorToast();
       }
     };
 
@@ -185,20 +188,20 @@ const MonthDetails = ({ url }: MonthDetailsProps) => {
 
         if (result.error) {
           console.error(result.error);
-          showErrorToast();
           setLoading(false);
+          showErrorToast();
         } else {
+          setLoading(false);
           showSuccessToast({
             subject: result.newBudgetElement.name,
             fetchMethod: fetchMethod,
           });
           setMonthDetailsUpdated(!monthDetailsUpdated);
-          setLoading(false);
         }
       } catch (error) {
         console.error(error);
-        showErrorToast();
         setLoading(false);
+        showErrorToast();
       }
     };
 
@@ -212,7 +215,7 @@ const MonthDetails = ({ url }: MonthDetailsProps) => {
     const fetchDelete = async (token: string): Promise<void> => {
       setLoading(true);
       try {
-        await fetch(
+        const fetchResult = await fetch(
           `${process.env.BACKEND_URL}/months/${currentMonth?._id}/${type}/${id}`,
           {
             method: 'delete',
@@ -223,21 +226,32 @@ const MonthDetails = ({ url }: MonthDetailsProps) => {
           }
         );
 
-        const found =
-          type === BudgetElements.income
-            ? currentMonth?.income.find((income) => income._id === id)
-            : currentMonth?.budget.find((budget) => budget._id === id);
-        if (found) {
-          showSuccessToast({
-            subject: found.name,
-            fetchMethod: FetchMethods.delete,
-          });
-          setMonthDetailsUpdated(!monthDetailsUpdated);
+        const result = await fetchResult.json();
+
+        if (result.error) {
+          console.error(result.error);
+          setLoading(false);
+          showErrorToast();
+        } else {
+          const found =
+            type === BudgetElements.income
+              ? currentMonth?.income.find((income) => income._id === id)
+              : currentMonth?.budget.find((budget) => budget._id === id);
+          if (found) {
+            showSuccessToast({
+              subject: found.name,
+              fetchMethod: FetchMethods.delete,
+            });
+            setMonthDetailsUpdated(!monthDetailsUpdated);
+          } else {
+            showErrorToast();
+          }
           setLoading(false);
         }
       } catch (error) {
         console.error(error);
         setLoading(false);
+        showErrorToast();
       }
     };
 
@@ -271,17 +285,19 @@ const MonthDetails = ({ url }: MonthDetailsProps) => {
         if (result.error) {
           console.error(result.error);
           setLoading(false);
+          showErrorToast();
         } else {
+          setLoading(false);
           showSuccessToast({
             subject: `Contribution to ${result.contributor.name}`,
             fetchMethod: fetchMethod,
           });
           setMonthDetailsUpdated(!monthDetailsUpdated);
-          setLoading(false);
         }
       } catch (error) {
         console.error(error);
         setLoading(false);
+        showErrorToast();
       }
     };
 
@@ -311,17 +327,19 @@ const MonthDetails = ({ url }: MonthDetailsProps) => {
         if (result.error) {
           console.error(result.error);
           setLoading(false);
+          showErrorToast();
         } else {
+          setLoading(false);
           showSuccessToast({
             subject: `Contribution to ${result.contributorToDelete.name}`,
             fetchMethod: FetchMethods.delete,
           });
           setMonthDetailsUpdated(!monthDetailsUpdated);
-          setLoading(false);
         }
       } catch (error) {
         console.error(error);
         setLoading(false);
+        showErrorToast();
       }
     };
 
@@ -355,17 +373,19 @@ const MonthDetails = ({ url }: MonthDetailsProps) => {
         if (result.error) {
           console.error(result.error);
           setLoading(false);
+          showErrorToast();
         } else {
+          setLoading(false);
           showSuccessToast({
             subject: `Spending from ${result.spending.name}`,
             fetchMethod: fetchMethod,
           });
           setMonthDetailsUpdated(!monthDetailsUpdated);
-          setLoading(false);
         }
       } catch (error) {
         console.error(error);
         setLoading(false);
+        showErrorToast();
       }
     };
 
@@ -395,17 +415,19 @@ const MonthDetails = ({ url }: MonthDetailsProps) => {
         if (result.error) {
           console.error(result.error);
           setLoading(false);
+          showErrorToast();
         } else {
+          setLoading(false);
           showSuccessToast({
             subject: `Spending from ${result.spendingToDelete.name}`,
             fetchMethod: FetchMethods.delete,
           });
           setMonthDetailsUpdated(!monthDetailsUpdated);
-          setLoading(false);
         }
       } catch (error) {
         console.error(error);
         setLoading(false);
+        showErrorToast();
       }
     };
 
@@ -429,6 +451,7 @@ const MonthDetails = ({ url }: MonthDetailsProps) => {
       sumAllSavings: sumAllSavings,
     };
     const updateMonthClose = async (token: string): Promise<void> => {
+      setLoading(true);
       try {
         const fetchResult = await fetch(
           `${process.env.BACKEND_URL}/months/${currentMonth?._id}/toggleclose/`,
@@ -446,8 +469,11 @@ const MonthDetails = ({ url }: MonthDetailsProps) => {
 
         if (result.error) {
           console.error(result.error);
+          setLoading(false);
+          showErrorToast();
         } else {
           if (currentMonth) {
+            setLoading(false);
             showSuccessToast({
               subject: currentMonth?.name,
               customMessage: isMonthClosed
@@ -459,6 +485,8 @@ const MonthDetails = ({ url }: MonthDetailsProps) => {
         }
       } catch (error) {
         console.error(error);
+        setLoading(false);
+        showErrorToast();
       }
     };
 
@@ -552,6 +580,7 @@ const MonthDetails = ({ url }: MonthDetailsProps) => {
               <Button
                 sx={{ marginRight: 2 }}
                 variant='contained'
+                disabled={isMonthClosed}
                 onClick={handleOpen}
               >
                 Quick Update
@@ -602,7 +631,10 @@ const MonthDetails = ({ url }: MonthDetailsProps) => {
                 )}
                 <br />
                 {currentMonth.closed && currentMonth.closedAt ? (
-                  <>Closed at: {formatDate(currentMonth.closedAt)}</>
+                  <>
+                    <strong>Closed at:</strong>{' '}
+                    {formatDate(currentMonth.closedAt)}
+                  </>
                 ) : (
                   <></>
                 )}
@@ -618,7 +650,8 @@ const MonthDetails = ({ url }: MonthDetailsProps) => {
             predecessor={predecessor}
             savings={savings}
           />
-          <div className={styles.column_container}>
+          {/* <div className={styles.column_container}> */}
+          <MonthDetailsContainer open={isMonthClosed}>
             <div className={styles.column}>
               <IncomesTable
                 incomes={currentMonth.income}
@@ -651,10 +684,11 @@ const MonthDetails = ({ url }: MonthDetailsProps) => {
               submitHandler={handleUpdateSubmit}
               initialValues={initialUpdateValues}
             />
-          </div>
+          </MonthDetailsContainer>
+          {/* </div> */}
           <ToastContainer />
           <Backdrop sx={{ color: '#fff', zIndex: 1000 }} open={loading}>
-            <CircularProgress color='success' />
+            <CircularProgress />
           </Backdrop>
         </>
       ) : (

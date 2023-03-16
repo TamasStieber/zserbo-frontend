@@ -26,12 +26,14 @@ import SavingDialog from '../components/SavingDialog';
 import {
   addThousandSeparators,
   formatDate,
+  showErrorToast,
   showSuccessToast,
 } from '../utils/utils';
 import WarningOutlinedIcon from '@mui/icons-material/WarningOutlined';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { NoSavingsFound } from '@/components/NoElementFound';
+import { GradientButton } from '@/components/CustomMUIElements';
 
 const Savings: NextPage = () => {
   const router = useRouter();
@@ -84,22 +86,30 @@ const Savings: NextPage = () => {
     const fetchDelete = async (token: string): Promise<void> => {
       setLoading(true);
       try {
-        await fetch(`${process.env.BACKEND_URL}/savings/${id}`, {
-          method: 'delete',
-          headers: {
-            Authorization: `Bearer ${token}`,
-            'Content-Type': 'application/json',
-          },
-        });
+        const fetchResult = await fetch(
+          `${process.env.BACKEND_URL}/savings/${id}`,
+          {
+            method: 'delete',
+            headers: {
+              Authorization: `Bearer ${token}`,
+              'Content-Type': 'application/json',
+            },
+          }
+        );
 
-        const found = savings.find((saving) => saving._id === id);
-        if (found) {
+        const data = await fetchResult.json();
+
+        if (data.error) {
+          console.error(data.error);
+          setLoading(false);
+          showErrorToast();
+        } else {
+          setLoading(false);
           showSuccessToast({
-            subject: found.name,
+            subject: data.savingToDelete.name,
             fetchMethod: FetchMethods.delete,
           });
           setSavingsListUpdated(!savingsListUpdated);
-          setLoading(false);
         }
       } catch (error) {
         console.error(error);
@@ -137,17 +147,19 @@ const Savings: NextPage = () => {
         if (data.error) {
           console.error(data.error);
           setLoading(false);
+          showErrorToast();
         } else {
+          setLoading(false);
           showSuccessToast({
             subject: data.saving.name,
             fetchMethod: fetchMethod,
           });
           setSavingsListUpdated(!savingsListUpdated);
-          setLoading(false);
         }
       } catch (error) {
         console.error(error);
         setLoading(false);
+        showErrorToast();
       }
     };
 
@@ -292,6 +304,9 @@ const Savings: NextPage = () => {
           <Button variant='contained' onClick={addElement}>
             Add
           </Button>
+          {/* <GradientButton variant='contained' onClick={addElement}>
+            Add
+          </GradientButton> */}
           <SavingDialog
             open={open}
             closeHandler={handleClose}
