@@ -59,7 +59,7 @@ const NewMonthForm = ({
         default: submitIsDefault,
       });
 
-      submitHandler(submitBody, fetchMethod, initialValues._id);
+      submitHandler(submitBody, submitName, fetchMethod, initialValues._id);
       closeHandler();
     },
   });

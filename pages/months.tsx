@@ -182,6 +182,7 @@ const Months: NextPage = () => {
 
   const handleSubmit = async (
     submitBody: BodyInit,
+    name: string,
     fetchMethod: FetchMethods,
     id?: string
   ): Promise<void> => {
@@ -222,7 +223,12 @@ const Months: NextPage = () => {
       }
     };
 
-    if (jwtToken) insertMonth(jwtToken);
+    const found = months.find((month) => month.name === name);
+    if (found) {
+      showErrorToast(`${name} already exists!`);
+    } else {
+      if (jwtToken) insertMonth(jwtToken);
+    }
   };
 
   const fetchMonths = async (token: string): Promise<void> => {

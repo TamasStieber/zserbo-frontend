@@ -178,7 +178,7 @@ export type SpendingsTableProps = {
 
 export type NewMonthFormProps = {
   closeHandler: () => void,
-  submitHandler: (submitBody: BodyInit, fetchMethod: FetchMethods, id?: string) => Promise<void>,
+  submitHandler: (submitBody: BodyInit, name: string, fetchMethod: FetchMethods, id?: string) => Promise<void>,
   initialValues: NewMonthValues,
   months: Months,
   fetchMethod: FetchMethods
