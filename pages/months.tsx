@@ -224,8 +224,6 @@ const Months: NextPage = () => {
     };
 
     const found = months.find((month) => month.name === name);
-    console.log(found);
-    console.log(name);
     if (found) {
       showErrorToast(`${name} already exists!`);
     } else {
