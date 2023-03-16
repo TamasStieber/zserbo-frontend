@@ -8,6 +8,7 @@ import {
   Typography,
   IconButton,
   InputAdornment,
+  CircularProgress,
 } from '@mui/material';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
@@ -17,13 +18,14 @@ import PetsIcon from '@mui/icons-material/Pets';
 import styles from '../../styles/Home.module.css';
 import Image from 'next/image';
 import { WhiteBackgroundTextField } from '@/components/CustomMUIElements';
+import { useRouter } from 'next/router';
 
 type TokenResponseType = { token: string };
 
 const showToastMessage = () => {
   toast.error('Invalid username or password', {
     position: 'top-right',
-    autoClose: 5000,
+    autoClose: 3000,
     hideProgressBar: false,
     closeOnClick: true,
     pauseOnHover: true,
@@ -39,7 +41,10 @@ const validationSchema = yup.object({
 });
 
 const LoginForm = () => {
+  const router = useRouter();
+
   const [isVisible, setIsVisible] = useState<boolean>(false);
+  const [loading, setLoading] = useState<boolean>(false);
 
   const formik = useFormik({
     initialValues: {
@@ -50,6 +55,7 @@ const LoginForm = () => {
     validationSchema: validationSchema,
 
     onSubmit: async (values) => {
+      setLoading(true);
       const loginBody = JSON.stringify({
         username: values.username,
         password: values.password,
@@ -60,13 +66,17 @@ const LoginForm = () => {
         body: loginBody,
         headers: { 'Content-Type': 'application/json' },
       });
+
       const responseBody: TokenResponseType = await login.json();
 
       if (responseBody.token !== undefined) {
         localStorage.setItem('jwtToken', responseBody.token || '');
-        window.location.href = '/';
+        // window.location.href = '/';
+        router.push('/');
+        setLoading(false);
       } else {
         showToastMessage();
+        setLoading(false);
       }
     },
   });
@@ -129,13 +139,36 @@ const LoginForm = () => {
             //   ),
             // }}
           />
-          <Button
+
+          {/* <Button
             sx={{ marginTop: 2, width: 150, alignSelf: 'center' }}
             variant='contained'
             type='submit'
           >
             Sign In
-          </Button>
+          </Button> */}
+          <Box sx={{ mt: 2, position: 'relative' }}>
+            <Button
+              variant='contained'
+              disabled={loading}
+              type='submit'
+              sx={{ width: 100 }}
+            >
+              Sign In
+            </Button>
+            {loading && (
+              <CircularProgress
+                size={24}
+                sx={{
+                  position: 'absolute',
+                  top: '50%',
+                  left: '50%',
+                  marginTop: '-12px',
+                  marginLeft: '-12px',
+                }}
+              />
+            )}
+          </Box>
         </Box>
         <ToastContainer />
       </div>
