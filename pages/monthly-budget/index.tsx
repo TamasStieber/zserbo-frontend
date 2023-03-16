@@ -4,6 +4,7 @@ import { Months } from '../../types/types';
 import PageContainer from '@/components/layout/PageContainer';
 import { NoMonthsFound } from '@/components/NoElementFound';
 import { Skeleton, Typography } from '@mui/material';
+import MonthPageSkeleton from '@/components/skeletons/MonthPageSkeleton';
 
 const MonthlyBudget = () => {
   const router = useRouter();
@@ -55,9 +56,7 @@ const MonthlyBudget = () => {
         ready && months && months.length === 0 ? (
           'Monthly Budget'
         ) : (
-          <Typography variant='h1'>
-            <Skeleton animation='wave' width={150} sx={{ margin: 'auto' }} />
-          </Typography>
+          <Skeleton animation='wave' width={150} sx={{ margin: 'auto' }} />
         )
       }
     >
@@ -75,12 +74,7 @@ const MonthlyBudget = () => {
           )}
         </>
       ) : (
-        <Skeleton
-          animation='wave'
-          variant='rounded'
-          height={500}
-          sx={{ marginBottom: '10px', borderRadius: '10px' }}
-        />
+        <MonthPageSkeleton />
       )}
     </PageContainer>
   );

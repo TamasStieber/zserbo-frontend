@@ -35,6 +35,7 @@ import {
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { NoMonthsFound } from '@/components/NoElementFound';
+import MonthsSkeleton from '@/components/skeletons/MonthsSkeleton';
 
 const Months: NextPage = () => {
   const router = useRouter();
@@ -182,7 +183,6 @@ const Months: NextPage = () => {
 
   const handleSubmit = async (
     submitBody: BodyInit,
-    name: string,
     fetchMethod: FetchMethods,
     id?: string
   ): Promise<void> => {
@@ -223,12 +223,7 @@ const Months: NextPage = () => {
       }
     };
 
-    const found = months.find((month) => month.name === name);
-    if (found) {
-      showErrorToast(`${name} already exists!`);
-    } else {
-      if (jwtToken) insertMonth(jwtToken);
-    }
+    if (jwtToken) insertMonth(jwtToken);
   };
 
   const fetchMonths = async (token: string): Promise<void> => {
@@ -361,26 +356,7 @@ const Months: NextPage = () => {
           </Backdrop>
         </>
       ) : (
-        <>
-          <Skeleton
-            animation='wave'
-            variant='rounded'
-            height={54}
-            sx={{ marginBottom: '10px', borderRadius: '10px' }}
-          />
-          <Skeleton
-            animation='wave'
-            variant='rounded'
-            height={54}
-            sx={{ marginBottom: '10px', borderRadius: '10px' }}
-          />
-          <Skeleton
-            animation='wave'
-            variant='rounded'
-            height={54}
-            sx={{ marginBottom: '10px', borderRadius: '10px' }}
-          />
-        </>
+        <MonthsSkeleton />
       )}
     </PageContainer>
   );
