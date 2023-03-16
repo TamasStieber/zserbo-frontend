@@ -327,14 +327,6 @@ const Savings: NextPage = () => {
           </Backdrop>
         </>
       ) : (
-        // <>
-        //   <Skeleton
-        //     animation='wave'
-        //     variant='rounded'
-        //     height={500}
-        //     sx={{ marginBottom: '10px', borderRadius: '10px' }}
-        //   />
-        // </>
         <SavingsSkeleton />
       )}
     </PageContainer>

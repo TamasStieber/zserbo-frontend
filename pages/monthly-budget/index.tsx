@@ -63,12 +63,7 @@ const MonthlyBudget = () => {
       {ready ? (
         <>
           {months && months.length > 0 ? (
-            <Skeleton
-              animation='wave'
-              variant='rounded'
-              height={500}
-              sx={{ marginBottom: '10px', borderRadius: '10px' }}
-            />
+            <MonthPageSkeleton />
           ) : (
             <NoMonthsFound link={true} />
           )}
